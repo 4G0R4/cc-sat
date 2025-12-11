@@ -38,6 +38,60 @@
             border: 1px solid #404040;
         }
         .chart-wrapper { position: relative; height: 400px; }
+        .order-table-container {
+            background: #232323;
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #404040;
+            overflow-x: auto;
+        }
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .order-table th {
+            color: #a0a0a0;
+            font-weight: 600;
+            padding: 12px;
+            border-bottom: 2px solid #404040;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+        .order-table td {
+            padding: 10px 12px;
+            text-align: center;
+            border-bottom: 1px solid #404040;
+        }
+        .order-table tr:last-child td {
+            border-bottom: none;
+        }
+        .order-table tr:hover {
+            background: #2a2a2a;
+        }
+        .buy-cell {
+            color: #4caf50;
+            font-weight: 500;
+        }
+        .sell-cell {
+            color: #f44336;
+            font-weight: 500;
+        }
+        .price-cell {
+            color: #ffc107;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .order-table a {
+            color: inherit;
+            text-decoration: none;
+        }
+        .order-table a:hover {
+            text-decoration: underline;
+        }
         .orders-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -103,7 +157,7 @@
         }
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 24px;
             text-align: center;
         }
@@ -121,6 +175,7 @@
         .stat-bid { color: #4caf50; }
         .stat-spread { color: #ffc107; }
         .stat-ask { color: #f44336; }
+        .stat-price { color: #ffc107; }
         @media (max-width: 768px) {
             .stats-grid { grid-template-columns: 1fr; gap: 16px; }
             .orders-grid { grid-template-columns: 1fr; }
@@ -152,6 +207,20 @@
             </div>
         </div>
 
+        <div class="order-table-container">
+            <table class="order-table">
+                <thead>
+                    <tr>
+                        <th>BUY (CC)</th>
+                        <th>PRICE (SATS)</th>
+                        <th>SELL (CC)</th>
+                    </tr>
+                </thead>
+                <tbody id="orderTableBody">
+                </tbody>
+            </table>
+        </div>
+
         <div class="stats-container">
             <div class="stats-grid">
                 <div class="stat-item">
@@ -159,12 +228,16 @@
                     <p class="stat-bid" id="bestBid">-</p>
                 </div>
                 <div class="stat-item">
-                    <p>Spread</p>
-                    <p class="stat-spread" id="spread">-</p>
+                    <p>Actual Price</p>
+                    <p class="stat-price" id="actualPrice">-</p>
                 </div>
                 <div class="stat-item">
                     <p>Best Ask</p>
                     <p class="stat-ask" id="bestAsk">-</p>
+                </div>
+                <div class="stat-item">
+                    <p>Spread</p>
+                    <p class="stat-spread" id="spread">-</p>
                 </div>
             </div>
         </div>
@@ -172,7 +245,7 @@
 
     <script>
         var orders = [
-            { user: '@SimpleStacker', type: 'buy', cc: 2, sats: 1, postId: '1323628' },
+            { user: '@SimpleStacker', type: 'buy', cc: 3, sats: 1.5, postId: '1323628' },
             { user: '@thebullishbitcoiner', type: 'sell', cc: 2, sats: 1, postId: '1323521' },
             { user: '@AGORA', type: 'buy', cc: 2, sats: 1.5, postId: '1323640' },
             { user: '@Undisciplined', type: 'buy', cc: 3, sats: 2, postId: '1323693' },
@@ -244,6 +317,12 @@
         }
 
         var ctx = document.getElementById('depthChart').getContext('2d');
+        
+        var actualPrice = null;
+        if (buyOrders.length > 0 && sellOrders.length > 0) {
+            actualPrice = (buyOrders[0].rate + sellOrders[0].rate) / 2;
+        }
+        
         var chart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -292,7 +371,26 @@
                                 return label;
                             }
                         }
-                    }
+                    },
+                    annotation: actualPrice ? {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                xMin: actualPrice.toFixed(4),
+                                xMax: actualPrice.toFixed(4),
+                                borderColor: '#ffc107',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: {
+                                    display: true,
+                                    content: 'Actual Price',
+                                    position: 'start',
+                                    backgroundColor: '#ffc107',
+                                    color: '#1c1c1c'
+                                }
+                            }
+                        }
+                    } : {}
                 },
                 scales: {
                     x: {
@@ -343,7 +441,7 @@
             
             var detailsSpan = document.createElement('span');
             detailsSpan.className = 'order-details';
-            detailsSpan.textContent = buyOrders[q].cc.toLocaleString() + ' CC : ' + buyOrders[q].sats.toLocaleString() + ' sats @ ' + buyOrders[q].rate.toFixed(4);
+            detailsSpan.textContent = buyOrders[q].cc.toLocaleString() + ' CC : ' + buyOrders[q].sats.toLocaleString() + ' sats @' + buyOrders[q].rate.toFixed(4);
             rightDiv.appendChild(detailsSpan);
             
             if (buyOrders[q].postId) {
@@ -375,7 +473,7 @@
             
             var detailsSpan2 = document.createElement('span');
             detailsSpan2.className = 'order-details';
-            detailsSpan2.textContent = sellOrders[r].cc.toLocaleString() + ' CC : ' + sellOrders[r].sats.toLocaleString() + ' sats @ ' + sellOrders[r].rate.toFixed(4);
+            detailsSpan2.textContent = sellOrders[r].cc.toLocaleString() + ' CC : ' + sellOrders[r].sats.toLocaleString() + ' sats @' + sellOrders[r].rate.toFixed(4);
             rightDiv2.appendChild(detailsSpan2);
             
             if (sellOrders[r].postId) {
@@ -404,6 +502,12 @@
             document.getElementById('bestAsk').textContent = 'N/A';
         }
         
+        if (actualPrice) {
+            document.getElementById('actualPrice').textContent = actualPrice.toFixed(4) + ' sats/CC';
+        } else {
+            document.getElementById('actualPrice').textContent = 'N/A';
+        }
+        
         var spreadText = 'N/A';
         if (sellOrders.length > 0 && buyOrders.length > 0) {
             var spreadValue = sellOrders[0].rate - buyOrders[0].rate;
@@ -411,6 +515,69 @@
             spreadText = spreadValue.toFixed(4) + ' (' + spreadPercent + '%)';
         }
         document.getElementById('spread').textContent = spreadText;
+
+        var allPrices = {};
+        for (var i = 0; i < buyOrders.length; i++) {
+            var price = buyOrders[i].rate.toFixed(2);
+            if (!allPrices[price]) {
+                allPrices[price] = { buy: [], sell: [] };
+            }
+            allPrices[price].buy.push(buyOrders[i]);
+        }
+        for (var j = 0; j < sellOrders.length; j++) {
+            var price = sellOrders[j].rate.toFixed(2);
+            if (!allPrices[price]) {
+                allPrices[price] = { buy: [], sell: [] };
+            }
+            allPrices[price].sell.push(sellOrders[j]);
+        }
+
+        var priceKeys = Object.keys(allPrices).map(parseFloat).sort(function(a, b) { return b - a; });
+        
+        var orderTableBody = document.getElementById('orderTableBody');
+        for (var k = 0; k < priceKeys.length; k++) {
+            var priceKey = priceKeys[k].toFixed(2);
+            var orders = allPrices[priceKey];
+            
+            var row = document.createElement('tr');
+            
+            var buyCell = document.createElement('td');
+            buyCell.className = 'buy-cell';
+            if (orders.buy.length > 0) {
+                var buyTotal = 0;
+                for (var m = 0; m < orders.buy.length; m++) {
+                    buyTotal += orders.buy[m].cc;
+                }
+                var buyLink = document.createElement('a');
+                buyLink.href = 'https://stacker.news/' + orders.buy[0].user.substring(1);
+                buyLink.target = '_blank';
+                buyLink.textContent = buyTotal.toLocaleString();
+                buyCell.appendChild(buyLink);
+            }
+            row.appendChild(buyCell);
+            
+            var priceCell = document.createElement('td');
+            priceCell.className = 'price-cell';
+            priceCell.textContent = priceKey;
+            row.appendChild(priceCell);
+            
+            var sellCell = document.createElement('td');
+            sellCell.className = 'sell-cell';
+            if (orders.sell.length > 0) {
+                var sellTotal = 0;
+                for (var n = 0; n < orders.sell.length; n++) {
+                    sellTotal += orders.sell[n].cc;
+                }
+                var sellLink = document.createElement('a');
+                sellLink.href = 'https://stacker.news/' + orders.sell[0].user.substring(1);
+                sellLink.target = '_blank';
+                sellLink.textContent = sellTotal.toLocaleString();
+                sellCell.appendChild(sellLink);
+            }
+            row.appendChild(sellCell);
+            
+            orderTableBody.appendChild(row);
+        }
     </script>
 </body>
 </html>
