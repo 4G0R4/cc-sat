@@ -143,3 +143,6 @@ There's an open discussion on this SN thread
 
 ## ⚠️ Disclaimer
 This is an unofficial community tool. Always verify offers directly on Stacker News before trading. The maintainers are not responsible for any trades or disputes.
+
+<img width="2629" height="3172" alt="screencapture-4g0r4-github-io-cc-sat-" src="https://github.com/user-attachments/assets/71743381-36ef-4ac5-90db-c900003b7259" />
+
