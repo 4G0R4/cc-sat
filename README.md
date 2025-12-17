@@ -1,4 +1,4 @@
-<img width="1407" height="241" alt="↯ Stacker.News CC/SAT Exchange Order Book" src="https://github.com/user-attachments/assets/979070a4-fe32-4de6-9324-cbe75922765f" />
+<img width="1407" height="241" alt="↯ Stacker.News CC→SAT Exchange Order Book" src="https://github.com/user-attachments/assets/979070a4-fe32-4de6-9324-cbe75922765f" />
 
 A decentralized peer-to-peer order book for trading Cowboy Credits (CC) and Satoshis (SAT) on Stacker.News, powered by GitHub Gists.
 
@@ -16,7 +16,7 @@ A decentralized peer-to-peer order book for trading Cowboy Credits (CC) and Sato
 
 ### 💰 Smart Trading Tools
 - **Dual Volume Input** - Enter either CC volume, SAT volume, or both
-- **Automatic Price Calculation** - Fill in 2 of 3 fields (Price/CC/SAT) and the third calculates automatically
+- **Automatic Price Calculation** - Fill in 2 of 3 fields (Price of 1CC in SAts - CC→SAT) and the third calculates automatically
 - **Sybil Fee Calculator** - See the 30% sybil fee impact on every order with red badges
 - **Live Fee Preview** - Real-time calculation showing total, fees, and net amounts
 
@@ -39,7 +39,7 @@ Simply visit [https://4g0r4.github.io/cc-sat/](https://4g0r4.github.io/cc-sat/) 
 ### Submit Orders via Stacker.News
 Comment on the [announcement post](https://stacker.news/items/1329607/r/AGORA) with your order details:
 - Order type (BUY/SELL)
-- Price (CC/SAT rate)
+- Price (CC→SAT rate)
 - Volume (in CCs)
 - Contact info
 - Any notes about fees, territory founder status, etc.
@@ -155,10 +155,10 @@ Help keep the order book clean:
 
 ### Current Market (Example)
 ```
-Best Bid:  0.8200 CC/SAT (buying CCs)
-Best Ask:  0.8500 CC/SAT (selling CCs)
-Mid Price: 0.8350 CC/SAT
-Spread:    0.0300 CC/SAT
+Best Bid:  0.8200 CC→SAT (buying CCs)
+Best Ask:  0.8500 CC→SAT (selling CCs)
+Mid Price: 0.8350 CC→SAT
+Spread:    0.0300 CC→SAT
 ```
 
 ### Reading the Order Book
@@ -180,7 +180,7 @@ Price    Volume      Contact         Fee
 ## ⚠️ Important Notes
 
 ### Sybil Fees
-- The order book displays the **effective CC/SAT rate** after considering fees
+- The order book displays the **effective CC→SAT rate** after considering fees
 - Red badges show the exact sybil fee amount for each order
 - Territory founders can offer better rates (they receive 21% back)
 
