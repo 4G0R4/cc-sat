@@ -195,27 +195,6 @@ Price    Volume      Contact         Fee
 - Some orders may be outdated - always verify before trading
 - Remove your orders when completed (click × button)
 
-## 📱 Mobile Responsive
-The order book is fully responsive and works on:
-- Desktop browsers
-- Tablets
-- Mobile phones
-
-## 🎨 Customization
-
-### Create Your Own Private Order Book
-1. Fork this repository
-2. Create a new GitHub Gist with empty order structure
-3. Update the `gistId` in the HTML file
-4. Deploy to GitHub Pages or any static host
-
-### Styling
-The CSS is inline and easily customizable:
-- Dark theme matching Stacker.News
-- Yellow (#fada5e) accent color
-- Google Sans font
-- Responsive grid layout
-
 ## 📜 License
 
 🄯 Copyleft - This project is open source and free to use, modify, and distribute.
@@ -224,7 +203,7 @@ The CSS is inline and easily customizable:
 
 - **Live Order Book**: [https://4g0r4.github.io/cc-sat/](https://4g0r4.github.io/cc-sat/)
 - **GitHub Repository**: [https://github.com/4G0R4/cc-sat](https://github.com/4G0R4/cc-sat)
-- **Announcement Post**: [Stacker.News](https://stacker.news/items/1329607/r/AGORA)
+- **Announcement Post**: [Stacker.News](https://stacker.news/items/1349267/r/AGORA)
 - **Issue Tracker**: [GitHub Issues](https://github.com/4G0R4/cc-sat/issues)
 - **Order Data (Gist)**: [View Raw Data](https://gist.github.com/4G0R4/a52699d9f7209a225ae6d10d77d53eca)
 
