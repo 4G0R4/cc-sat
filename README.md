@@ -236,3 +236,6 @@ Special thanks to:
 ---
 
 **Start trading today at [https://4g0r4.github.io/cc-sat/](https://4g0r4.github.io/cc-sat/)**
+<img width="1190" height="186" alt="" src="https://github.com/user-attachments/assets/cee42161-c541-4c70-a2bd-36d72261f122" />
+
+
