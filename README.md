@@ -1,4 +1,4 @@
-<img width="1407" height="241" alt="↯ Stacker.News CC→SAT Exchange Order Book" src="https://github.com/user-attachments/assets/979070a4-fe32-4de6-9324-cbe75922765f" />
+<img width="1407" height="241" alt="↯ Stacker.News CC/SAT Exchange Order Book" src="https://github.com/user-attachments/assets/979070a4-fe32-4de6-9324-cbe75922765f" />
 
 A decentralized peer-to-peer order book for trading Cowboy Credits (CC) and Satoshis (SAT) on Stacker.News, powered by GitHub Gists.
 
