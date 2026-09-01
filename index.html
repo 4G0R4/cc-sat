@@ -597,24 +597,19 @@
 
         <div class="kpi-section">
             <div class="kpi-card">
-                <div class="kpi-label">Best Bid</div>
-                <div class="kpi-value positive" id="kpiBestBid">-</div>
-                <div class="info-text">Highest buyer price (sats/CC)</div>
+                <div class="kpi-label">Med BID rate</div>
+                <div class="kpi-value positive" id="kpiMedBid">-</div>
+                <div class="info-text">Median buyer price (sats/CC)</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-label">Market Rate</div>
+                <div class="kpi-label">CC Market Rate</div>
                 <div class="kpi-value neutral" id="kpiMarketRate">-</div>
-                <div class="info-text">Weighted average (sats/CC)</div>
+                <div class="info-text">Volume-weighted average (sats/CC)</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-label">@ccbank Rate</div>
-                <div class="kpi-value neutral" id="kpiCcbankRate">0.3500</div>
-                <div class="info-text"><a href="https://stacker.news/items/1559598" target="_blank">@ccbank</a> effective 2.857 CC/sat (incl. 30% fee) · net 0.5 sats/CC</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-label">Best Ask</div>
-                <div class="kpi-value negative" id="kpiBestAsk">-</div>
-                <div class="info-text">Lowest seller price (sats/CC)</div>
+                <div class="kpi-label">Med AKS rate</div>
+                <div class="kpi-value negative" id="kpiMedAsk">-</div>
+                <div class="info-text">Median seller price (sats/CC)</div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-label">Spread</div>
@@ -1002,26 +997,25 @@
         }
 
         function updateKPIs() {
-            const bestBid = orders.bids.length > 0 ? orders.bids[0].price : null;
-            const bestAsk = orders.asks.length > 0 ? orders.asks[0].price : null;
-            
-            document.getElementById('kpiBestBid').textContent = bestBid ? bestBid.toFixed(4) : '-';
-            document.getElementById('kpiBestAsk').textContent = bestAsk ? bestAsk.toFixed(4) : '-';
-            
-            // Calculate weighted average market rate
+            function medianPrice(list) {
+                if (!list.length) return null;
+                const sorted = list.map(o => o.price).sort((a, b) => a - b);
+                const mid = Math.floor(sorted.length / 2);
+                return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+            }
+
+            const bestBid  = orders.bids.length > 0 ? orders.bids[0].price  : null;
+            const bestAsk  = orders.asks.length > 0 ? orders.asks[0].price  : null;
+            const medBid   = medianPrice(orders.bids);
+            const medAsk   = medianPrice(orders.asks);
+
+            document.getElementById('kpiMedBid').textContent   = medBid   ? medBid.toFixed(4)   : '-';
+            document.getElementById('kpiMedAsk').textContent   = medAsk   ? medAsk.toFixed(4)   : '-';
+
             let totalWeightedPrice = 0;
             let totalVolume = 0;
-            
-            orders.bids.forEach(order => {
-                totalWeightedPrice += order.price * order.volume;
-                totalVolume += order.volume;
-            });
-            
-            orders.asks.forEach(order => {
-                totalWeightedPrice += order.price * order.volume;
-                totalVolume += order.volume;
-            });
-            
+            orders.bids.forEach(o => { totalWeightedPrice += o.price * o.volume; totalVolume += o.volume; });
+            orders.asks.forEach(o => { totalWeightedPrice += o.price * o.volume; totalVolume += o.volume; });
             const marketRate = totalVolume > 0 ? totalWeightedPrice / totalVolume : null;
             document.getElementById('kpiMarketRate').textContent = marketRate ? marketRate.toFixed(4) : '-';
             
