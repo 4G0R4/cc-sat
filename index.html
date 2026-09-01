@@ -780,10 +780,18 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
     <script>
         let orders = { asks: [], bids: [] };
         let config = { token: '', gistId: 'a52699d9f7209a225ae6d10d77d53eca' };
         let depthChart = null;
+
+        function medianPrice(list) {
+            if (!list.length) return null;
+            const sorted = list.map(o => o.price).sort((a, b) => a - b);
+            const mid = Math.floor(sorted.length / 2);
+            return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
+        }
 
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
@@ -997,13 +1005,6 @@
         }
 
         function updateKPIs() {
-            function medianPrice(list) {
-                if (!list.length) return null;
-                const sorted = list.map(o => o.price).sort((a, b) => a - b);
-                const mid = Math.floor(sorted.length / 2);
-                return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-            }
-
             const bestBid  = orders.bids.length > 0 ? orders.bids[0].price  : null;
             const bestAsk  = orders.asks.length > 0 ? orders.asks[0].price  : null;
             const medBid   = medianPrice(orders.bids);
@@ -1053,6 +1054,13 @@
                 askDepth.push({ x: orders.asks[i].price, y: cumAskVol });
             }
 
+            const medBid = medianPrice(orders.bids);
+            const medAsk = medianPrice(orders.asks);
+
+            if (window.ChartAnnotation) {
+                Chart.register(window.ChartAnnotation);
+            }
+
             depthChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -1078,6 +1086,42 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
+                        annotation: {
+                            annotations: {
+                                medBidLine: {
+                                    type: 'line',
+                                    scaleID: 'x',
+                                    value: medBid,
+                                    borderColor: '#9DB266',
+                                    borderWidth: 2,
+                                    borderDash: [6, 4],
+                                    label: {
+                                        display: true,
+                                        content: 'Med BID ' + (medBid ? medBid.toFixed(4) : '-'),
+                                        position: 'start',
+                                        backgroundColor: '#9DB266',
+                                        color: '#000',
+                                        font: { weight: 'bold', size: 11 }
+                                    }
+                                },
+                                medAskLine: {
+                                    type: 'line',
+                                    scaleID: 'x',
+                                    value: medAsk,
+                                    borderColor: '#D9847A',
+                                    borderWidth: 2,
+                                    borderDash: [6, 4],
+                                    label: {
+                                        display: true,
+                                        content: 'Med AKS ' + (medAsk ? medAsk.toFixed(4) : '-'),
+                                        position: 'start',
+                                        backgroundColor: '#D9847A',
+                                        color: '#000',
+                                        font: { weight: 'bold', size: 11 }
+                                    }
+                                }
+                            }
+                        },
                         legend: {
                             labels: {
                                 color: '#f0f0f0',
