@@ -20,11 +20,13 @@ A decentralized peer-to-peer order book for trading Cowboy Credits (CC) and Sato
 - **Fee Transparency** - Each order clearly indicates whether fees are included or paid by buyer
 - **Territory Founder Badges** - Identify orders with 21% founder rebate
 - **Trade Simulator** - Select any order and calculate exact sats, fees, and net rates for your trade
+- **BUY/SELL Buttons** - Each order links directly to its Stacker.News offer page
 
 ### 🔗 Smart Contact Linking
 - **Stacker.News usernames** - Automatically links to user profiles (@username or username)
 - **Nostr npubs** - Links to njump.me for nostr public keys
 - **Info tooltips** - Hover over ℹ️ to see order notes and details
+- **Offer links** - Optional `offerUrl` field powers the BUY/SELL button per order
 
 ### 🔐 Decentralized & Open
 - **No login required** to view orders
@@ -80,6 +82,7 @@ Orders are stored in a public GitHub Gist (`a52699d9f7209a225ae6d10d77d53eca`) a
       "territoryFounder": false,
       "contact": "@stackernaut",
       "notes": "Territory founder - fees included",
+      "offerUrl": "https://stacker.news/items/1234567/r/STACKERNAME",
       "timestamp": "2024-12-17T12:00:00.000Z"
     }
   ],
@@ -92,6 +95,7 @@ Orders are stored in a public GitHub Gist (`a52699d9f7209a225ae6d10d77d53eca`) a
       "territoryFounder": true,
       "contact": "npub1abc...",
       "notes": "Bulk purchase - DM for details",
+      "offerUrl": "https://stacker.news/items/1234567/r/STACKERNAME",
       "timestamp": "2024-12-17T13:00:00.000Z"
     }
   ]
