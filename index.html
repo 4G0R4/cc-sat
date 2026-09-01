@@ -548,12 +548,28 @@
             text-decoration: underline;
         }
 
+        .anchor {
+            color: var(--sn-grey);
+            text-decoration: none;
+            opacity: 0.55;
+            margin-left: 6px;
+            font-size: 0.7em;
+            font-weight: 400;
+            vertical-align: middle;
+        }
+
+        .anchor:hover {
+            color: var(--sn-gold);
+            opacity: 1;
+            text-decoration: none;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-			<h1><span class="logo">↯</span> Stacker.News CC→SAT Exchange Order Book</h1>
+			<h1 id="cc-sat"><span class="logo">↯</span> Stacker.News CC→SAT Exchange Order Book <a class="anchor" href="#cc-sat" title="Link to this section">#</a></h1>
             <div class="subtitle">Order book for Cowboy Credits (CC) ⇄ Satoshis (SAT) trading on Stacker News - Place your order below or comment in the <a href="https://stacker.news/items/1349267/r/AGORA" target="_blank">annoucement post</a>.</div>
         </header>
 
@@ -591,6 +607,11 @@
                 <div class="info-text">Weighted average (sats/CC)</div>
             </div>
             <div class="kpi-card">
+                <div class="kpi-label">@ccbank Rate</div>
+                <div class="kpi-value neutral" id="kpiCcbankRate">0.3500</div>
+                <div class="info-text"><a href="https://stacker.news/items/1559598" target="_blank">@ccbank</a> effective 2.857 CC/sat (incl. 30% fee) · net 0.5 sats/CC</div>
+            </div>
+            <div class="kpi-card">
                 <div class="kpi-label">Best Ask</div>
                 <div class="kpi-value negative" id="kpiBestAsk">-</div>
                 <div class="info-text">Lowest seller price (sats/CC)</div>
@@ -609,7 +630,7 @@
         <div class="order-book">
 
             <div class="book-side bids">
-                <h3>📗 BIDS (Buy Orders)</h3>
+                <h3 id="bids">📗 BIDS (Buy Orders) <a class="anchor" href="#bids" title="Link to this section">#</a></h3>
                 <div class="order-row order-header">
                     <div>Price (sats/CC)</div>
                     <div>Min. Volume</div>
@@ -620,7 +641,7 @@
             </div>
 
             <div class="book-side asks">
-                <h3>📕 ASKS (Sell Orders)</h3>
+                <h3 id="asks">📕 ASKS (Sell Orders) <a class="anchor" href="#asks" title="Link to this section">#</a></h3>
                 <div class="order-row order-header">
                     <div>Price (sats/CC)</div>
                     <div>Min. Volume</div>
@@ -633,7 +654,7 @@
         </div>
 
         <div class="trade-simulator" style="background: var(--sn-surface, #18181a); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 20px; margin-bottom: 25px;">
-            <h3 style="color: #FADA5E; margin-bottom: 15px; font-size: 1.1em;">📊 Trade Simulator</h3>
+            <h3 id="simulator" style="color: #FADA5E; margin-bottom: 15px; font-size: 1.1em;">📊 Trade Simulator <a class="anchor" href="#simulator" title="Link to this section">#</a></h3>
             <div class="sim-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div class="form-group">
                     <label>Select Order:</label>
@@ -684,7 +705,7 @@
     <div id="settingsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>[&#9965;] Settings</h2>
+                <h2 id="settings">[&#9965;] Settings</h2>
                 <span class="close" onclick="closeModal('settingsModal')">&times;</span>
             </div>
             <div id="settingsStatus" class="status" style="display:none;"></div>
@@ -706,7 +727,7 @@
     <div id="orderModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>[&#726;] Submit New Order</h2>
+                <h2 id="submit-order">[&#726;] Submit New Order</h2>
                 <span class="close" onclick="closeModal('orderModal')">&times;</span>
             </div>
             <div id="orderStatus" class="status" style="display:none;"></div>
