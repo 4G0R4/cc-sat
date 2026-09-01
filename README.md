@@ -11,14 +11,15 @@ A decentralized peer-to-peer order book for trading Cowboy Credits (CC) and Sato
 ### 📊 Real-Time Market Data
 - **Live Order Book** - See all active buy (bids) and sell (asks) orders
 - **Market Depth Chart** - Visual representation of cumulative order volume
-- **KPI Dashboard** - Track Best Bid, Best Ask, Actual Price (mid-market), and Spread
+- **KPI Dashboard** - Track Best Bid, Best Ask, Market Rate (weighted average), and Spread (bps)
 - **Automatic Updates** - Orders load instantly from GitHub Gist
 
 ### 💰 Smart Trading Tools
-- **Dual Volume Input** - Enter either CC volume, SAT volume, or both
-- **Automatic Price Calculation** - Fill in 2 of 3 fields (Price of 1CC in SAts - CC→SAT) and the third calculates automatically
-- **Sybil Fee Calculator** - See the 30% sybil fee impact on every order with red badges
-- **Live Fee Preview** - Real-time calculation showing total, fees, and net amounts
+- **Market Rate** - Weighted average price across all orders
+- **Net Rate Display** - Every order shows gross and net rates after 30% fee
+- **Fee Transparency** - Each order clearly indicates whether fees are included or paid by buyer
+- **Territory Founder Badges** - Identify orders with 21% founder rebate
+- **Trade Simulator** - Select any order and calculate exact sats, fees, and net rates for your trade
 
 ### 🔗 Smart Contact Linking
 - **Stacker.News usernames** - Automatically links to user profiles (@username or username)
@@ -39,10 +40,11 @@ Simply visit [https://4g0r4.github.io/cc-sat/](https://4g0r4.github.io/cc-sat/) 
 ### Submit Orders via Stacker.News
 Comment on the [announcement post](https://stacker.news/items/1329607/r/AGORA) with your order details:
 - Order type (BUY/SELL)
-- Price (CC→SAT rate)
+- Price (sats per CC, before 30% fee)
 - Volume (in CCs)
 - Contact info
-- Any notes about fees, territory founder status, etc.
+- Whether fees are included in your price
+- Territory founder status if applicable
 
 ### Submit Orders via GitHub
 
@@ -74,6 +76,8 @@ Orders are stored in a public GitHub Gist (`a52699d9f7209a225ae6d10d77d53eca`) a
       "id": "1734450123456",
       "price": 0.85,
       "volume": 10000,
+      "feesIncluded": true,
+      "territoryFounder": false,
       "contact": "@stackernaut",
       "notes": "Territory founder - fees included",
       "timestamp": "2024-12-17T12:00:00.000Z"
@@ -84,6 +88,8 @@ Orders are stored in a public GitHub Gist (`a52699d9f7209a225ae6d10d77d53eca`) a
       "id": "1734450234567",
       "price": 0.82,
       "volume": 15000,
+      "feesIncluded": false,
+      "territoryFounder": true,
       "contact": "npub1abc...",
       "notes": "Bulk purchase - DM for details",
       "timestamp": "2024-12-17T13:00:00.000Z"
@@ -94,15 +100,10 @@ Orders are stored in a public GitHub Gist (`a52699d9f7209a225ae6d10d77d53eca`) a
 
 ### Understanding Sybil Fees
 Stacker.News currently implements a 30% sybil fee on all transactions:
-- **When buying CCs**: You pay 1.3 sats per CC (30% fee included)
-- **Territory founders**: Receive 21% back on their territories
-- **The order book**: Shows the effective price AND the fee amount separately
-
-Example:
-- Order: 10,000 CC @ 0.85 sats/CC
-- Total: 8,500 sats
-- 30% Sybil Fee: 2,550 sats (shown in red badge)
-- Net to seller: 5,950 sats
+- **When fees are included**: The listed price is what the buyer pays per CC, and the seller receives 70% of it (after fee)
+- **When buyer pays**: The buyer pays the listed price for CCs plus 30% on top
+- **Territory founders**: Receive 21% back on their territories, allowing better rates
+- **The order book**: Shows both gross and net rates for every order
 
 ## 🎯 Order Types
 
@@ -155,33 +156,33 @@ Help keep the order book clean:
 
 ### Current Market (Example)
 ```
-Best Bid:  0.8200 CC→SAT (buying CCs)
-Best Ask:  0.8500 CC→SAT (selling CCs)
-Mid Price: 0.8350 CC→SAT
-Spread:    0.0300 CC→SAT
+Best Bid:  0.8200 sats/CC (buying CCs)
+Best Ask:  0.8500 sats/CC (selling CCs)
+Market:    0.8350 sats/CC (weighted average)
+Spread:    366 bps
 ```
 
 ### Reading the Order Book
 
 **ASKS (Selling CC for sats)**
 ```
-Price    Volume      Contact         Fee
-0.8500   10,000 CC   @seller1        -2,550 sats
-0.8700   5,000 CC    @seller2        -1,305 sats
+Price       Net       Volume    Contact       Status
+0.8500     0.5950    10,000 CC  @seller1      [Fees Included]
+0.8700     0.8700    5,000 CC   @seller2      [Buyer +30%]
 ```
 
 **BIDS (Buying CC with sats)**
 ```
-Price    Volume      Contact         Fee
-0.8200   15,000 CC   @buyer1         -3,690 sats
-0.8000   20,000 CC   @buyer2         -4,800 sats
+Price       Net       Volume    Contact       Status
+0.8200     0.5740    15,000 CC  @buyer1       [Fees Included]
+0.8000     0.8000    20,000 CC  @buyer2       [Buyer +30%]
 ```
 
 ## ⚠️ Important Notes
 
 ### Sybil Fees
-- The order book displays the **effective CC→SAT rate** after considering fees
-- Red badges show the exact sybil fee amount for each order
+- All prices are expressed as **gross rates** (sats per CC) before the 30% sybil fee
+- Each order shows a net rate after fees, and indicates whether fees are included
 - Territory founders can offer better rates (they receive 21% back)
 
 ### Trust & Safety

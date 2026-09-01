@@ -5,20 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>↯ Stacker.News CC→SAT Exchange Order Book</title>
 
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap" rel="stylesheet">
-
     <style>
 
-		.google-sans {
-		  font-family: "Google Sans", sans-serif;
-		  font-optical-sizing: auto;
-		  font-weight: <weight>;
-		  font-style: normal;
-		  font-variation-settings:
-		    "GRAD" 0;
-		}  	
+        :root {
+            --sn-bg: #121214;
+            --sn-surface: #18181a;
+            --sn-input: #121211;
+            --sn-border: rgba(255, 255, 255, 0.15);
+            --sn-text: #f0f0f0;
+            --sn-grey: #969696;
+            --sn-gold: #FADA5E;
+            --sn-orange: #F6911D;
+            --sn-ruby: #C03221;
+            --sn-olive: #5C8001;
+            --sn-link: #2E99D1;
+            --sn-link-hover: #007CBE;
+        }
 
         * {
             margin: 0;
@@ -27,11 +29,13 @@
         }
         
         body {
-            font-family: "Google Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: #121214;
-            color: #e7e7e7;
+            font-family: system-ui, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+            background: var(--sn-bg);
+            color: var(--sn-text);
             min-height: 100vh;
             padding: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
         
         .container {
@@ -41,35 +45,41 @@
         
         header {
             text-align: center;
+            border-bottom: 1px solid var(--sn-border);
+            padding-bottom: 20px;
             margin-bottom: 30px;
         }
         
         h1 {
             font-size: 2.2em;
-            color: #fada5e;
+            color: var(--sn-text);
             margin-bottom: 8px;
             font-weight: 700;
         }
         
+        h1 .logo {
+            color: var(--sn-gold);
+        }
+        
         .subtitle {
-            color: #8b949e;
+            color: var(--sn-grey);
             font-size: 0.95em;
         }
         
         .warning-banner {
-		    background: #fada5e1a;
-		    border: 1px solid #fada5e;
+		    background: rgb(49.2,29,5.8);
+		    border: 1px solid rgb(147.6,87,17.4);
 		    border-radius: 8px;
 		    padding: 15px;
 		    margin-bottom: 15px;
-		    color: #fada5e;
+		    color: rgb(249.6,189,119.4);
             font-size: 0.9em;
         }
         
         .warning-banner strong {
-            display: block;
-            margin-bottom: 5px;
-            color: #fada5e;
+            display: inline-block;
+            margin-bottom: 3px;
+            color: #f9bd77;
         }
         
         .kpi-section {
@@ -80,15 +90,15 @@
         }
         
         .kpi-card {
-            background: #1c1f26;
-            border: 1px solid #30363d;
+            background: var(--sn-surface);
+            border: 1px solid var(--sn-border);
             border-radius: 8px;
             padding: 20px;
             text-align: center;
         }
         
         .kpi-label {
-            color: #8b949e;
+            color: var(--sn-grey);
             font-size: 0.85em;
             margin-bottom: 8px;
             text-transform: uppercase;
@@ -98,24 +108,24 @@
         .kpi-value {
             font-size: 1.8em;
             font-weight: 700;
-            color: #e7e7e7;
+            color: var(--sn-text);
         }
         
         .kpi-value.positive {
-            color: #3fb950;
+            color: #9DB266;
         }
         
         .kpi-value.negative {
-            color: #f85149;
+            color: #D9847A;
         }
         
         .kpi-value.neutral {
-            color: #fada5e;
+            color: var(--sn-gold);
         }
         
         .chart-container {
-            background: #1c1f26;
-            border: 1px solid #30363d;
+            background: var(--sn-surface);
+            border: 1px solid var(--sn-border);
             border-radius: 8px;
             padding: 25px;
             margin-bottom: 15px;
@@ -135,11 +145,11 @@
         }
         
         button {
-            background: #fada5e;
-            color: black;
+            background: var(--sn-gold);
+            color: #000;
             border: none;
             padding: 12px 24px;
-            border-radius: 6px;
+            border-radius: 0.4rem;
             cursor: pointer;
             font-weight: 600;
             font-size: 0.95em;
@@ -148,25 +158,25 @@
         }
         
         button:hover {
-        	color: white;
-            background: #ff8533;
+        	color: #000;
+            background: var(--sn-orange);
             transform: translateY(-1px);
         }
         
         button:disabled {
-            background: #30363d;
-            color: #8b949e;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--sn-grey);
             cursor: not-allowed;
             transform: none;
         }
         
         .btn-secondary {
-            background: #30363d;
-            color: #e7e7e7;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--sn-text);
         }
         
         .btn-secondary:hover {
-            background: #3d444d;
+            background: rgba(255, 255, 255, 0.2);
         }
         
         .order-book {
@@ -177,8 +187,8 @@
         }
         
         .book-side {
-            background: #1c1f26;
-            border: 1px solid #30363d;
+            background: var(--sn-surface);
+            border: 1px solid var(--sn-border);
             border-radius: 8px;
             padding: 20px;
         }
@@ -186,15 +196,15 @@
         .book-side h3 {
             margin-bottom: 15px;
             font-size: 1.1em;
-            font-weight: 600;
+            font-weight: 700;
         }
         
         .asks h3 {
-            color: #f85149;
+            color: #D9847A;
         }
         
         .bids h3 {
-            color: #3fb950;
+            color: #9DB266;
         }
         
         .order-row {
@@ -203,23 +213,23 @@
             gap: 10px;
             padding: 12px;
             background: rgba(255, 255, 255, 0.03);
-            border-radius: 6px;
+            border-radius: 0.4rem;
             margin-bottom: 8px;
             font-size: 0.9em;
             align-items: center;
         }
         
         .asks .order-row {
-            border-left: 3px solid #f85149;
+            border-left: 3px solid var(--sn-ruby);
         }
         
         .bids .order-row {
-            border-left: 3px solid #3fb950;
+            border-left: 3px solid var(--sn-olive);
         }
         
         .order-header {
             font-weight: 600;
-            color: #8b949e;
+            color: var(--sn-grey);
             background: transparent !important;
             border: none !important;
         }
@@ -247,11 +257,11 @@
         }
         
         .modal-content {
-            background: #1c1f26;
+            background: var(--sn-surface);
             margin: 50px auto;
             padding: 30px;
-            border: 1px solid #30363d;
-            border-radius: 12px;
+            border: 1px solid var(--sn-border);
+            border-radius: 0.75rem;
             width: 90%;
             max-width: 600px;
             max-height: 85vh;
@@ -278,13 +288,13 @@
         }
         
         .modal-header h2 {
-            color: #fada5e;
+            color: var(--sn-gold);
             font-size: 1.5em;
-            font-weight: 600;
+            font-weight: 700;
         }
         
         .close {
-            color: #8b949e;
+            color: var(--sn-grey);
             font-size: 32px;
             font-weight: 300;
             cursor: pointer;
@@ -293,7 +303,7 @@
         }
         
         .close:hover {
-            color: #e7e7e7;
+            color: var(--sn-text);
         }
         
         .form-group {
@@ -303,7 +313,7 @@
         label {
             display: block;
             margin-bottom: 8px;
-            color: #8b949e;
+            color: var(--sn-grey);
             font-size: 0.9em;
             font-weight: 500;
         }
@@ -311,22 +321,28 @@
         input, select, textarea {
             width: 100%;
             padding: 12px;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #e7e7e7;
+            background: var(--sn-input);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 0.4rem;
+            color: var(--sn-text);
             font-family: inherit;
             font-size: 0.95em;
         }
         
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #fada5e;
-            background: #161b22;
+            border-color: var(--sn-gold);
+            background: var(--sn-surface);
         }
         
         a {
-        	color: inherit;
+        	color: var(--sn-link);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: var(--sn-link-hover);
+            text-decoration: underline;
         }
 
         .status {
@@ -338,25 +354,25 @@
         }
         
         .status.loading {
-            background: rgba(88, 166, 255, 0.1);
-            border: 1px solid #58a6ff;
-            color: #58a6ff;
+            background: rgba(46, 153, 209, 0.1);
+            border: 1px solid #2E99D1;
+            color: #2E99D1;
         }
         
         .status.error {
-            background: rgba(248, 81, 73, 0.1);
-            border: 1px solid #f85149;
-            color: #f85149;
+            background: rgba(192, 50, 33, 0.1);
+            border: 1px solid var(--sn-ruby);
+            color: #D9847A;
         }
         
         .status.success {
-            background: rgba(63, 185, 80, 0.1);
-            border: 1px solid #3fb950;
-            color: #3fb950;
+            background: rgba(92, 128, 1, 0.1);
+            border: 1px solid var(--sn-olive);
+            color: #9DB266;
         }
         
         .info-text {
-            color: #8b949e;
+            color: var(--sn-grey);
             font-size: 0.85em;
             margin-top: 8px;
             line-height: 1.5;
@@ -379,20 +395,69 @@
             h1 {
                 font-size: 1.6em;
             }
+
+            .trade-simulator .sim-grid,
+            .sim-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .sim-result-grid {
+                grid-template-columns: 1fr 1fr !important;
+            }
         }
 
         .info-icon {cursor: context-menu;}
 
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-left: 6px;
+            white-space: nowrap;
+        }
+
+        .badge-fees-included {
+            background: rgba(92, 128, 1, 0.25);
+            color: #C2D47E;
+            border: 1px solid #9DB266;
+        }
+
+        .badge-buyer-pays {
+            background: rgba(192, 50, 33, 0.2);
+            color: #E5A19A;
+            border: 1px solid #D9847A;
+        }
+
+        .badge-founder {
+            background: rgba(46, 153, 209, 0.2);
+            color: #7CC4E8;
+            border: 1px solid #2E99D1;
+        }
+
+        .net-rate {
+            font-size: 0.8em;
+            color: var(--sn-grey);
+            margin-top: 2px;
+        }
+
         footer {
             margin: 1rem;
             padding: 1rem;
-            color: #787878;
+            color: var(--sn-grey);
             text-align: center;
         }
 
         .header a,
         footer a {
-            color: #bbbbbb;
+            color: var(--sn-link);
+            text-decoration: none;
+        }
+
+        .header a:hover,
+        footer a:hover {
+            color: var(--sn-link-hover);
             text-decoration: underline;
         }
 
@@ -401,33 +466,52 @@
 <body>
     <div class="container">
         <header>
-			<h1>↯ Stacker.News CC→SAT Exchange Order Book</h1>
+			<h1><span class="logo">↯</span> Stacker.News CC→SAT Exchange Order Book</h1>
             <div class="subtitle">Order book for Cowboy Credits (CC) ⇄ Satoshis (SAT) trading on Stacker News - Place your order below or comment in the <a href="https://stacker.news/items/1349267/r/AGORA" target="_blank">annoucement post</a>.</div>
         </header>
 
         <div class="warning-banner">
-            <strong>⚠ Sybil Fees Notice</strong>
-            Consider Stacker.News <a href="https://stacker.news/items/730254/r/AGORA" target="_blank">30% sybil fees</a> on transactions when placing orders. The effective rate is 1CC=1sats when buying CCs from Stacker.news/credits. 
-            Territory founders currently receive 21% back when transacting on their territories, allowing them to offer better rates. Mouse over the &#9432 to read more details about each offer.
-            Data submitted and maintained by the SN community: click the × to permanently delete any obsolete offer. Exchange price rates are expressed in 'sat per CC' (CC→SAT).
+            <strong>⚠ How This Works</strong>
+            <div style="margin-bottom: 10px;">
+                <strong style="display:inline;">Price Definition:</strong> All prices are <strong style="display:inline;">gross rates</strong> — what you pay per CC <em>before</em> the 30% sybil fee. 
+                <a href="https://stacker.news/items/730254/r/AGORA" target="_blank">Learn more about SN fees</a>.
+            </div>
+            <div style="margin-bottom: 10px;">
+                <strong style="display:inline;">Example (Fees Included):</strong> If you buy 1,000 CC at 0.6 sats/CC with fees included → You pay 600 sats, receive 700 CC (30% deducted).
+            </div>
+            <div style="margin-bottom: 10px;">
+                <strong style="display:inline;">Example (Buyer Pays):</strong> If you buy 1,000 CC at 0.6 sats/CC with buyer paying fees → You pay 600 sats + 180 sats fee = 780 sats, receive 1,000 CC.
+            </div>
+            <div>
+                <strong style="display:inline;">Territory Founders:</strong> Receive 21% rebate when trading in their territory, allowing better rates. 
+                Look for the <span style="background:rgba(46,153,209,0.2); color:#7CC4E8; padding:2px 6px; border-radius:4px; font-size:0.9em;">Founder</span> badge.
+            </div>
+            <div style="margin-top: 10px; color: #9f9f9f; font-size: 0.9em;">
+                Data submitted by the SN community. Click × to remove obsolete orders. 
+                Mouse over &#9432 for order details.
+            </div>
         </div>
 
         <div class="kpi-section">
             <div class="kpi-card">
                 <div class="kpi-label">Best Bid</div>
                 <div class="kpi-value positive" id="kpiBestBid">-</div>
+                <div class="info-text">Highest buyer price (sats/CC)</div>
             </div>
             <div class="kpi-card">
-                <div class="kpi-label">Actual Price</div>
-                <div class="kpi-value neutral" id="kpiActualPrice">-</div>
+                <div class="kpi-label">Market Rate</div>
+                <div class="kpi-value neutral" id="kpiMarketRate">-</div>
+                <div class="info-text">Weighted average (sats/CC)</div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-label">Best Ask</div>
                 <div class="kpi-value negative" id="kpiBestAsk">-</div>
+                <div class="info-text">Lowest seller price (sats/CC)</div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-label">Spread</div>
                 <div class="kpi-value" id="kpiSpread">-</div>
+                <div class="info-text">Bid-Ask difference (bps)</div>
             </div>
         </div>
 
@@ -440,9 +524,9 @@
             <div class="book-side bids">
                 <h3>📗 BIDS (Buy Orders)</h3>
                 <div class="order-row order-header">
-                    <div>Price</div>
+                    <div>Price (sats/CC)</div>
                     <div>Volume</div>
-                    <div>Contact</div>
+                    <div>Contact & Status</div>
                     <div></div>
                 </div>
                 <div id="bidsList"></div>
@@ -451,14 +535,51 @@
             <div class="book-side asks">
                 <h3>📕 ASKS (Sell Orders)</h3>
                 <div class="order-row order-header">
-                    <div>Price</div>
+                    <div>Price (sats/CC)</div>
                     <div>Volume</div>
-                    <div>Contact</div>
+                    <div>Contact & Status</div>
                     <div></div>
                 </div>
                 <div id="asksList"></div>
             </div>
             
+        </div>
+
+        <div class="trade-simulator" style="background: var(--sn-surface, #18181a); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 20px; margin-bottom: 25px;">
+            <h3 style="color: #FADA5E; margin-bottom: 15px; font-size: 1.1em;">📊 Trade Simulator</h3>
+            <div class="sim-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="form-group">
+                    <label>Select Order:</label>
+                    <select id="simulatorOrder" onchange="updateSimulator()" style="width: 100%; padding: 12px; background: #121211; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; color: #f0f0f0; font-family: inherit;">
+                        <option value="">-- Select an order --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>CC Amount to Trade:</label>
+                    <input type="number" id="simulatorAmount" min="1" placeholder="1000" oninput="updateSimulator()" style="width: 100%; padding: 12px; background: #121211; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; color: #f0f0f0; font-family: inherit;">
+                </div>
+            </div>
+            <div id="simulatorResult" style="display: none; background: #121211; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 15px; margin-top: 15px;">
+                <div class="sim-result-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center;">
+                    <div>
+                        <div style="color: #969696; font-size: 0.85em; margin-bottom: 5px;">Gross Rate</div>
+                        <div style="font-size: 1.2em; font-weight: 600;" id="simGrossRate">-</div>
+                    </div>
+                    <div>
+                        <div style="color: #969696; font-size: 0.85em; margin-bottom: 5px;">30% Fee</div>
+                        <div style="font-size: 1.2em; font-weight: 600; color: #D9847A;" id="simFee">-</div>
+                    </div>
+                    <div>
+                        <div style="color: #969696; font-size: 0.85em; margin-bottom: 5px;">Net Rate</div>
+                        <div style="font-size: 1.2em; font-weight: 600; color: #9DB266;" id="simNetRate">-</div>
+                    </div>
+                    <div>
+                        <div id="simTotalSatsLabel" style="color: #969696; font-size: 0.85em; margin-bottom: 5px;">Total Sats</div>
+                        <div style="font-size: 1.2em; font-weight: 600; color: #FADA5E;" id="simTotalSats">-</div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.15); color: #969696; font-size: 0.9em;" id="simExplanation"></div>
+            </div>
         </div>
 
         <div class="action-buttons">
@@ -510,20 +631,41 @@
                 </select>
             </div>
             <div class="form-group">
-                <label>Price (CC→SAT rate, e.g., 0.9 means 0.9 sats per CC):</label>
+                <label>Price (sats per CC, before 30% sybil fee):</label>
                 <input type="number" id="orderPrice" step="0.01" min="0.01" placeholder="0.85">
+                <div class="info-text">This is the gross rate — what the buyer pays per CC</div>
             </div>
             <div class="form-group">
                 <label>Volume (CCs):</label>
                 <input type="number" id="orderVolume" step="100" min="1" placeholder="10000">
             </div>
             <div class="form-group">
+                <label>30% Sybil Fee Handling:</label>
+                <div style="display: flex; gap: 20px; margin-top: 8px;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="feesIncluded" value="true" checked>
+                        <span>I include fees in my price (net rate = price × 0.7)</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="radio" name="feesIncluded" value="false">
+                        <span>Buyer pays fees on top (+30%)</span>
+                    </label>
+                </div>
+                <div class="info-text">If fees are included, the effective rate is 70% of your listed price</div>
+            </div>
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="orderFounder">
+                    <span>Territory Founder (21% rebate applies when trading in my territory)</span>
+                </label>
+            </div>
+            <div class="form-group">
                 <label>Contact Info (optional - SN username, nostr, etc.):</label>
                 <input type="text" id="orderContact" placeholder="@username or npub...">
             </div>
             <div class="form-group">
-                <label>Notes (optional - fees included, territory founder status, etc.):</label>
-                <textarea id="orderNotes" rows="2" placeholder="e.g., 'Territory founder - sybil fees included'"></textarea>
+                <label>Notes (optional - trade terms, limits, etc.):</label>
+                <textarea id="orderNotes" rows="2" placeholder="e.g., 'Min 1,000 CC per trade'"></textarea>
             </div>
             <button onclick="submitOrder()">[&#187;] Submit Order</button>
         </div>
@@ -591,9 +733,20 @@
                 const content = data.files['orders.json'].content;
                 orders = JSON.parse(content);
                 
+                // Ensure new fields have defaults for existing orders
+                orders.bids.forEach(order => {
+                    if (order.feesIncluded === undefined) order.feesIncluded = true;
+                    if (order.territoryFounder === undefined) order.territoryFounder = false;
+                });
+                orders.asks.forEach(order => {
+                    if (order.feesIncluded === undefined) order.feesIncluded = true;
+                    if (order.territoryFounder === undefined) order.territoryFounder = false;
+                });
+                
                 renderOrderBook();
                 updateKPIs();
                 renderDepthChart();
+                populateSimulatorOrders();
             } catch (error) {
                 console.error('Error loading orders:', error);
             }
@@ -641,6 +794,8 @@
             const volume = parseFloat(document.getElementById('orderVolume').value);
             const contact = document.getElementById('orderContact').value.trim();
             const notes = document.getElementById('orderNotes').value.trim();
+            const feesIncluded = document.querySelector('input[name="feesIncluded"]:checked').value === 'true';
+            const territoryFounder = document.getElementById('orderFounder').checked;
 
             if (!price || price <= 0) {
                 showStatus('Please enter a valid price', 'error');
@@ -656,6 +811,8 @@
                 id: Date.now().toString(),
                 price: price,
                 volume: volume,
+                feesIncluded: feesIncluded,
+                territoryFounder: territoryFounder,
                 contact: contact || 'Anonymous',
                 notes: notes,
                 timestamp: new Date().toISOString()
@@ -676,11 +833,14 @@
                 renderOrderBook();
                 updateKPIs();
                 renderDepthChart();
+                populateSimulatorOrders();
                 
                 document.getElementById('orderPrice').value = '';
                 document.getElementById('orderVolume').value = '';
                 document.getElementById('orderContact').value = '';
                 document.getElementById('orderNotes').value = '';
+                document.querySelector('input[name="feesIncluded"][value="true"]').checked = true;
+                document.getElementById('orderFounder').checked = false;
                 
                 setTimeout(() => closeModal('orderModal'), 2000);
             }
@@ -704,6 +864,7 @@
                 renderOrderBook();
                 updateKPIs();
                 renderDepthChart();
+                populateSimulatorOrders();
             }
         }
 
@@ -714,14 +875,28 @@
             document.getElementById('kpiBestBid').textContent = bestBid ? bestBid.toFixed(4) : '-';
             document.getElementById('kpiBestAsk').textContent = bestAsk ? bestAsk.toFixed(4) : '-';
             
+            // Calculate weighted average market rate
+            let totalWeightedPrice = 0;
+            let totalVolume = 0;
+            
+            orders.bids.forEach(order => {
+                totalWeightedPrice += order.price * order.volume;
+                totalVolume += order.volume;
+            });
+            
+            orders.asks.forEach(order => {
+                totalWeightedPrice += order.price * order.volume;
+                totalVolume += order.volume;
+            });
+            
+            const marketRate = totalVolume > 0 ? totalWeightedPrice / totalVolume : null;
+            document.getElementById('kpiMarketRate').textContent = marketRate ? marketRate.toFixed(4) : '-';
+            
             if (bestBid && bestAsk) {
-                const mid = (bestBid + bestAsk) / 2;
-                const spread = bestBid - bestAsk;
-                
-                document.getElementById('kpiActualPrice').textContent = mid.toFixed(4);
-                document.getElementById('kpiSpread').textContent = spread.toFixed(4);
+                const spread = bestAsk - bestBid;
+                const spreadBps = (spread / bestAsk) * 10000;
+                document.getElementById('kpiSpread').textContent = spreadBps.toFixed(0) + ' bps';
             } else {
-                document.getElementById('kpiActualPrice').textContent = '-';
                 document.getElementById('kpiSpread').textContent = '-';
             }
         }
@@ -757,16 +932,16 @@
                     datasets: [{
                         label: 'Bids',
                         data: bidDepth,
-                        borderColor: '#3fb950',
-                        backgroundColor: 'rgba(63, 185, 80, 0.1)',
+                        borderColor: '#9DB266',
+                        backgroundColor: 'rgba(92, 128, 1, 0.15)',
                         fill: true,
                         stepped: true,
                         tension: 0
                     }, {
                         label: 'Asks',
                         data: askDepth,
-                        borderColor: '#f85149',
-                        backgroundColor: 'rgba(248, 81, 73, 0.1)',
+                        borderColor: '#D9847A',
+                        backgroundColor: 'rgba(192, 50, 33, 0.15)',
                         fill: true,
                         stepped: true,
                         tension: 0
@@ -778,14 +953,14 @@
                     plugins: {
                         legend: {
                             labels: {
-                                color: '#e7e7e7',
+                                color: '#f0f0f0',
                                 font: { size: 12 }
                             }
                         },
                         title: {
                             display: true,
                             text: 'Market Depth',
-                            color: '#fada5e',
+                            color: '#FADA5E',
                             font: { size: 16, weight: 'bold' }
                         }
                     },
@@ -794,20 +969,20 @@
                             type: 'linear',
                             title: {
                                 display: true,
-                                text: 'Price (CC→SAT)',
-                                color: '#8b949e'
+                                text: 'Price (sats/CC)',
+                                color: '#969696'
                             },
-                            ticks: { color: '#8b949e' },
-                            grid: { color: '#30363d' }
+                            ticks: { color: '#969696' },
+                            grid: { color: 'rgba(255,255,255,0.15)' }
                         },
                         y: {
                             title: {
                                 display: true,
                                 text: 'Cumulative Volume (CC)',
-                                color: '#8b949e'
+                                color: '#969696'
                             },
-                            ticks: { color: '#8b949e' },
-                            grid: { color: '#30363d' }
+                            ticks: { color: '#969696' },
+                            grid: { color: 'rgba(255,255,255,0.15)' }
                         }
                     }
                 }
@@ -815,36 +990,66 @@
         }
 
         function renderOrderBook() {
-            const asksHtml = orders.asks.map(order => `
-                <div class="order-row">
-                    <div>${order.price.toFixed(4)}</div>
-                    <div>${order.volume.toLocaleString()} CC</div>
-                    <div>
-                        ${formatContact(order.contact)}
-                        ${order.notes ? `<span class="info-icon" title="${escapeHtml(order.notes)}" alt="${escapeHtml(order.notes)}">&#9432</span>` : ''}
+            const asksHtml = orders.asks.map(order => {
+                const netRate = order.feesIncluded ? order.price * 0.7 : order.price;
+                const feeBadge = order.feesIncluded 
+                    ? '<span class="badge badge-fees-included">Fees Included</span>'
+                    : '<span class="badge badge-buyer-pays">Buyer +30%</span>';
+                const founderBadge = order.territoryFounder 
+                    ? '<span class="badge badge-founder">Founder -21%</span>'
+                    : '';
+                
+                return `
+                    <div class="order-row">
+                        <div>
+                            ${order.price.toFixed(4)} sats/CC
+                            <div class="net-rate">Net: ${netRate.toFixed(4)} sats/CC</div>
+                        </div>
+                        <div>${order.volume.toLocaleString()} CC</div>
+                        <div>
+                            ${formatContact(order.contact)}
+                            ${feeBadge}
+                            ${founderBadge}
+                            ${order.notes ? `<span class="info-icon" title="${escapeHtml(order.notes)}" alt="${escapeHtml(order.notes)}">&#9432</span>` : ''}
+                        </div>
+                        <div>
+                            <button class="small-btn" onclick="removeOrder('ask', '${order.id}')">×</button>
+                        </div>
                     </div>
-                    <div>
-                        <button class="small-btn" onclick="removeOrder('ask', '${order.id}')">×</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
-            const bidsHtml = orders.bids.map(order => `
-                <div class="order-row">
-                    <div>${order.price.toFixed(4)}</div>
-                    <div>${order.volume.toLocaleString()} CC</div>
-                    <div>
-                        ${formatContact(order.contact)}
-                        ${order.notes ? `<span class="info-icon" title="${escapeHtml(order.notes)}" alt="${escapeHtml(order.notes)}">&#9432</span>` : ''}
+            const bidsHtml = orders.bids.map(order => {
+                const netRate = order.feesIncluded ? order.price * 0.7 : order.price;
+                const feeBadge = order.feesIncluded 
+                    ? '<span class="badge badge-fees-included">Fees Included</span>'
+                    : '<span class="badge badge-buyer-pays">Buyer +30%</span>';
+                const founderBadge = order.territoryFounder 
+                    ? '<span class="badge badge-founder">Founder -21%</span>'
+                    : '';
+                
+                return `
+                    <div class="order-row">
+                        <div>
+                            ${order.price.toFixed(4)} sats/CC
+                            <div class="net-rate">Net: ${netRate.toFixed(4)} sats/CC</div>
+                        </div>
+                        <div>${order.volume.toLocaleString()} CC</div>
+                        <div>
+                            ${formatContact(order.contact)}
+                            ${feeBadge}
+                            ${founderBadge}
+                            ${order.notes ? `<span class="info-icon" title="${escapeHtml(order.notes)}" alt="${escapeHtml(order.notes)}">&#9432</span>` : ''}
+                        </div>
+                        <div>
+                            <button class="small-btn" onclick="removeOrder('bid', '${order.id}')">×</button>
+                        </div>
                     </div>
-                    <div>
-                        <button class="small-btn" onclick="removeOrder('bid', '${order.id}')">×</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
-            document.getElementById('asksList').innerHTML = asksHtml || '<div style="padding:20px; text-align:center; color:#8b949e;">No sell orders</div>';
-            document.getElementById('bidsList').innerHTML = bidsHtml || '<div style="padding:20px; text-align:center; color:#8b949e;">No buy orders</div>';
+            document.getElementById('asksList').innerHTML = asksHtml || '<div style="padding:20px; text-align:center; color:#969696;">No sell orders</div>';
+            document.getElementById('bidsList').innerHTML = bidsHtml || '<div style="padding:20px; text-align:center; color:#969696;">No buy orders</div>';
         }
 
         function formatContact(contact) {
@@ -879,6 +1084,88 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function populateSimulatorOrders() {
+            const select = document.getElementById('simulatorOrder');
+            select.innerHTML = '<option value="">-- Select an order --</option>';
+            
+            const allOrders = [
+                ...orders.bids.map(o => ({...o, type: 'bid', label: `BID: ${o.contact} @ ${o.price} sats/CC`})),
+                ...orders.asks.map(o => ({...o, type: 'ask', label: `ASK: ${o.contact} @ ${o.price} sats/CC`}))
+            ].sort((a, b) => b.price - a.price);
+            
+            allOrders.forEach(order => {
+                const option = document.createElement('option');
+                option.value = JSON.stringify(order);
+                option.textContent = order.label;
+                select.appendChild(option);
+            });
+        }
+
+        function updateSimulator() {
+            const orderSelect = document.getElementById('simulatorOrder');
+            const amountInput = document.getElementById('simulatorAmount');
+            const resultDiv = document.getElementById('simulatorResult');
+            
+            if (!orderSelect.value || !amountInput.value) {
+                resultDiv.style.display = 'none';
+                return;
+            }
+            
+            const order = JSON.parse(orderSelect.value);
+            const amount = parseFloat(amountInput.value);
+            
+            if (!amount || amount <= 0) {
+                resultDiv.style.display = 'none';
+                return;
+            }
+            
+            const grossRate = order.price;
+            const isAsk = order.type === 'ask';
+            const youAre = isAsk ? 'Buyer of CCs' : 'Seller of CCs';
+            
+            let netRate, fee, totalSats, explanation;
+            
+            if (order.feesIncluded) {
+                netRate = grossRate * 0.7;
+                fee = grossRate * 0.3;
+                totalSats = amount * grossRate;
+                const ccReceived = amount * (isAsk ? 0.7 : 1);
+                if (isAsk) {
+                    explanation = `You are the <strong>${youAre}</strong>. This order sells CCs at <strong>${grossRate.toFixed(4)} sats/CC with fees included</strong>. ` +
+                        `Trading ${amount.toLocaleString()} CC: you pay <strong>${totalSats.toFixed(0)} sats</strong> and receive <strong>${ccReceived.toLocaleString()} CC</strong> (${(amount - ccReceived).toLocaleString()} CC lost to the 30% fee).`;
+                } else {
+                    explanation = `You are the <strong>${youAre}</strong>. This order buys CCs at <strong>${grossRate.toFixed(4)} sats/CC with fees included</strong>. ` +
+                        `Trading ${amount.toLocaleString()} CC: you send ${amount.toLocaleString()} CC and receive <strong>${totalSats.toFixed(0)} sats</strong> (${fee.toFixed(2)} sats/CC fee already deducted).`;
+                }
+            } else {
+                netRate = grossRate;
+                fee = grossRate * 0.3;
+                totalSats = amount * grossRate * 1.3;
+                if (isAsk) {
+                    explanation = `You are the <strong>${youAre}</strong>. This order sells CCs at <strong>${grossRate.toFixed(4)} sats/CC with buyer paying the fee</strong>. ` +
+                        `Trading ${amount.toLocaleString()} CC: you pay <strong>${totalSats.toFixed(0)} sats</strong> ` +
+                        `(${(amount * grossRate).toFixed(0)} sats + ${(amount * fee).toFixed(0)} sats 30% fee) and receive the full ${amount.toLocaleString()} CC.`;
+                } else {
+                    explanation = `You are the <strong>${youAre}</strong>. This order buys CCs at <strong>${grossRate.toFixed(4)} sats/CC with buyer paying the fee</strong>. ` +
+                        `Trading ${amount.toLocaleString()} CC: you send ${amount.toLocaleString()} CC and receive <strong>${totalSats.toFixed(0)} sats</strong> ` +
+                        `(${(amount * grossRate).toFixed(0)} sats + ${(amount * fee).toFixed(0)} sats 30% fee paid by the buyer).`;
+                }
+            }
+            
+            if (order.territoryFounder) {
+                explanation += ` <span style="color:#2E99D1;">Territory founder: 21% rebate applies on this order.</span>`;
+            }
+            
+            document.getElementById('simGrossRate').textContent = grossRate.toFixed(4) + ' sats/CC';
+            document.getElementById('simFee').textContent = (fee * amount).toFixed(0) + ' sats';
+            document.getElementById('simNetRate').textContent = netRate.toFixed(4) + ' sats/CC';
+            document.getElementById('simTotalSats').textContent = totalSats.toFixed(0) + ' sats';
+            document.getElementById('simTotalSatsLabel').textContent = isAsk ? 'You Pay (Sats)' : 'You Receive (Sats)';
+            document.getElementById('simExplanation').innerHTML = explanation;
+            
+            resultDiv.style.display = 'block';
         }
 
         // Initialize
