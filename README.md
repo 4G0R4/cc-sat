@@ -16,7 +16,6 @@ A decentralized peer-to-peer order book for trading Cowboy Credits (CC) and Sato
 
 ### 💰 Smart Trading Tools
 - **Market Rate** - Weighted average price across all orders
-- **Net Rate Display** - Every order shows gross and net rates after 30% fee
 - **Fee Transparency** - Each order clearly indicates whether fees are included or paid by buyer
 - **Territory Founder Badges** - Identify orders with 21% founder rebate
 - **Trade Simulator** - Select any order and calculate exact sats, fees, and net rates for your trade

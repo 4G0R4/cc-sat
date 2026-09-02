@@ -523,12 +523,6 @@
             border: 1px solid #2E99D1;
         }
 
-        .net-rate {
-            font-size: 0.8em;
-            color: var(--sn-grey);
-            margin-top: 2px;
-        }
-
         footer {
             margin: 1rem;
             padding: 1rem;
@@ -663,7 +657,7 @@
                 </div>
             </div>
             <div id="simulatorResult" style="display: none; background: #121211; border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 15px; margin-top: 15px;">
-                <div class="sim-result-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; text-align: center;">
+                <div class="sim-result-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: center;">
                     <div>
                         <div style="color: #969696; font-size: 0.85em; margin-bottom: 5px;">Gross Rate</div>
                         <div style="font-size: 1.2em; font-weight: 600;" id="simGrossRate">-</div>
@@ -671,10 +665,6 @@
                     <div>
                         <div style="color: #969696; font-size: 0.85em; margin-bottom: 5px;">30% Fee</div>
                         <div style="font-size: 1.2em; font-weight: 600; color: #D9847A;" id="simFee">-</div>
-                    </div>
-                    <div>
-                        <div style="color: #969696; font-size: 0.85em; margin-bottom: 5px;">Net Rate</div>
-                        <div style="font-size: 1.2em; font-weight: 600; color: #9DB266;" id="simNetRate">-</div>
                     </div>
                     <div>
                         <div id="simTotalSatsLabel" style="color: #969696; font-size: 0.85em; margin-bottom: 5px;">Total Sats</div>
@@ -1162,7 +1152,6 @@
 
         function renderOrderBook() {
             const asksHtml = orders.asks.map(order => {
-                const netRate = order.feesIncluded ? order.price * 0.7 : order.price;
                 const feeBadge = order.feesIncluded 
                     ? '<span class="badge badge-fees-included">Fees Included</span>'
                     : '<span class="badge badge-buyer-pays">Buyer +30%</span>';
@@ -1178,7 +1167,6 @@
                     <div class="order-row">
                         <div>
                             ${order.price.toFixed(4)} sats/CC
-                            <div class="net-rate">Net: ${netRate.toFixed(4)} sats/CC</div>
                         </div>
                         <div>${order.volume.toLocaleString()} CC</div>
                         <div>
@@ -1196,7 +1184,6 @@
             }).join('');
 
             const bidsHtml = orders.bids.map(order => {
-                const netRate = order.feesIncluded ? order.price * 0.7 : order.price;
                 const feeBadge = order.feesIncluded 
                     ? '<span class="badge badge-fees-included">Fees Included</span>'
                     : '<span class="badge badge-buyer-pays">Buyer +30%</span>';
@@ -1212,7 +1199,6 @@
                     <div class="order-row">
                         <div>
                             ${order.price.toFixed(4)} sats/CC
-                            <div class="net-rate">Net: ${netRate.toFixed(4)} sats/CC</div>
                         </div>
                         <div>${order.volume.toLocaleString()} CC</div>
                         <div>
@@ -1306,10 +1292,9 @@
             const isAsk = order.type === 'ask';
             const youAre = isAsk ? 'Buyer of CCs' : 'Seller of CCs';
             
-            let netRate, fee, totalSats, explanation;
+            let fee, totalSats, explanation;
             
             if (order.feesIncluded) {
-                netRate = grossRate * 0.7;
                 fee = grossRate * 0.3;
                 totalSats = amount * grossRate;
                 const ccReceived = amount * (isAsk ? 0.7 : 1);
@@ -1321,7 +1306,6 @@
                         `Trading ${amount.toLocaleString()} CC: you send ${amount.toLocaleString()} CC and receive <strong>${totalSats.toFixed(0)} sats</strong> (${fee.toFixed(2)} sats/CC fee already deducted).`;
                 }
             } else {
-                netRate = grossRate;
                 fee = grossRate * 0.3;
                 totalSats = amount * grossRate * 1.3;
                 if (isAsk) {
@@ -1341,7 +1325,6 @@
             
             document.getElementById('simGrossRate').textContent = grossRate.toFixed(4) + ' sats/CC';
             document.getElementById('simFee').textContent = (fee * amount).toFixed(0) + ' sats';
-            document.getElementById('simNetRate').textContent = netRate.toFixed(4) + ' sats/CC';
             document.getElementById('simTotalSats').textContent = totalSats.toFixed(0) + ' sats';
             document.getElementById('simTotalSatsLabel').textContent = isAsk ? 'You Pay (Sats)' : 'You Receive (Sats)';
             document.getElementById('simExplanation').innerHTML = explanation;
