@@ -67,12 +67,12 @@
         }
         
         .warning-banner {
-		    background: rgb(49.2,29,5.8);
-		    border: 1px solid rgb(147.6,87,17.4);
-		    border-radius: 8px;
-		    padding: 15px;
-		    margin-bottom: 15px;
-		    color: rgb(249.6,189,119.4);
+            background: rgb(49.2,29,5.8);
+            border: 1px solid rgb(147.6,87,17.4);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            color: rgb(249.6,189,119.4);
             font-size: 0.9em;
         }
         
@@ -159,7 +159,7 @@
         }
         
         button:hover {
-        	color: #000;
+            color: #000;
             background: var(--sn-orange);
             transform: translateY(-1px);
         }
@@ -411,7 +411,7 @@
         }
         
         a {
-        	color: var(--sn-link);
+            color: var(--sn-link);
             text-decoration: none;
         }
 
@@ -563,7 +563,7 @@
 <body>
     <div class="container">
         <header>
-			<h1 id="cc-sat"><span class="logo">↯</span> Stacker.News CC/SAT Exchange Order Book <a class="anchor" href="#cc-sat" title="Link to this section">#</a></h1>
+            <h1 id="cc-sat"><span class="logo">↯</span> Stacker.News CC/SAT Exchange Order Book <a class="anchor" href="#cc-sat" title="Link to this section">#</a></h1>
             <div class="subtitle">Order book for Cowboy Credits (CC) ⇄ Satoshis (SAT) trading on Stacker News - Place your order below or comment in the <a href="https://stacker.news/items/1349267/r/AGORA" target="_blank">annoucement post</a>.</div>
         </header>
 
@@ -622,7 +622,7 @@
                 <h3 id="bids">📗 BIDS (Buy Orders) <a class="anchor" href="#bids" title="Link to this section">#</a></h3>
                 <div class="order-row order-header">
                     <div>Price (sats/CC)</div>
-                    <div>Min. Volume</div>
+                    <div>Max Volume</div>
                     <div>Contact & Status</div>
                     <div></div>
                 </div>
@@ -633,7 +633,7 @@
                 <h3 id="asks">📕 ASKS (Sell Orders) <a class="anchor" href="#asks" title="Link to this section">#</a></h3>
                 <div class="order-row order-header">
                     <div>Price (sats/CC)</div>
-                    <div>Min. Volume</div>
+                    <div>Max Volume</div>
                     <div>Contact & Status</div>
                     <div></div>
                 </div>
@@ -1032,13 +1032,17 @@
             let cumBidVol = 0;
             let cumAskVol = 0;
 
-            // Bids (reverse order for chart)
-            for (let i = orders.bids.length - 1; i >= 0; i--) {
+            // Bids: iterate from the best (highest) bid downward, cumulating,
+            // then reverse so cumulative volume decreases as price rises, forming
+            // a proper bid wall that peaks at the lowest price.
+            let rawBidDepth = [];
+            for (let i = 0; i < orders.bids.length; i++) {
                 cumBidVol += orders.bids[i].volume;
-                bidDepth.push({ x: orders.bids[i].price, y: cumBidVol });
+                rawBidDepth.push({ x: orders.bids[i].price, y: cumBidVol });
             }
+            bidDepth = rawBidDepth.reverse();
 
-            // Asks
+            // Asks: ascending price, cumulative volume rises toward the right.
             for (let i = 0; i < orders.asks.length; i++) {
                 cumAskVol += orders.asks[i].volume;
                 askDepth.push({ x: orders.asks[i].price, y: cumAskVol });
