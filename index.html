@@ -1298,7 +1298,7 @@
                     ? `<button class="small-btn" onclick="removeOrder('${order.side}', '${order.id}')">×</button>`
                     : '';
                 const offerBtn = order.offerUrl
-                    ? `<a class="offer-btn ${isBid ? 'sell' : 'buy'}" href="${escapeHtml(order.offerUrl)}" target="_blank" rel="noopener">${isBid ? 'SELL' : 'BUY'}</a>`
+                    ? `<a class="offer-btn ${isBid ? 'buy' : 'sell'}" href="${escapeHtml(order.offerUrl)}" target="_blank" rel="noopener">${isBid ? 'BUY' : 'SELL'}</a>`
                     : '';
 
                 const delLeft    = isBid ? `<div class="cell-del">${removeBtn}</div>` : `<div class="cell-del cell-empty">–</div>`;
