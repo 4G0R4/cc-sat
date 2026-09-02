@@ -802,9 +802,13 @@
         let config = { token: '', gistId: 'a52699d9f7209a225ae6d10d77d53eca' };
         let depthChart = null;
 
+        function netRate(order) {
+            return order && order.feesIncluded ? order.price / 0.7 : (order ? order.price : null);
+        }
+
         function medianPrice(list) {
             if (!list.length) return null;
-            const sorted = list.map(o => o.price).sort((a, b) => a - b);
+            const sorted = list.map(o => netRate(o)).sort((a, b) => a - b);
             const mid = Math.floor(sorted.length / 2);
             return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
         }
@@ -1021,8 +1025,8 @@
         }
 
         function updateKPIs() {
-            const bestBid  = orders.bids.length > 0 ? orders.bids[0].price  : null;
-            const bestAsk  = orders.asks.length > 0 ? orders.asks[0].price  : null;
+            const bestBid  = orders.bids.length > 0 ? netRate(orders.bids[0]) : null;
+            const bestAsk  = orders.asks.length > 0 ? netRate(orders.asks[0]) : null;
             const medBid   = medianPrice(orders.bids);
             const medAsk   = medianPrice(orders.asks);
 
@@ -1031,8 +1035,8 @@
 
             let totalWeightedPrice = 0;
             let totalVolume = 0;
-            orders.bids.forEach(o => { totalWeightedPrice += o.price * o.volume; totalVolume += o.volume; });
-            orders.asks.forEach(o => { totalWeightedPrice += o.price * o.volume; totalVolume += o.volume; });
+            orders.bids.forEach(o => { totalWeightedPrice += netRate(o) * o.volume; totalVolume += o.volume; });
+            orders.asks.forEach(o => { totalWeightedPrice += netRate(o) * o.volume; totalVolume += o.volume; });
             const marketRate = totalVolume > 0 ? totalWeightedPrice / totalVolume : null;
             document.getElementById('kpiMarketRate').textContent = marketRate ? marketRate.toFixed(4) : '-';
             
@@ -1064,14 +1068,14 @@
             let rawBidDepth = [];
             for (let i = 0; i < orders.bids.length; i++) {
                 cumBidVol += orders.bids[i].volume;
-                rawBidDepth.push({ x: orders.bids[i].price, y: cumBidVol });
+                rawBidDepth.push({ x: netRate(orders.bids[i]), y: cumBidVol });
             }
             bidDepth = rawBidDepth.reverse();
 
             // Asks: ascending price, cumulative volume rises toward the right.
             for (let i = 0; i < orders.asks.length; i++) {
                 cumAskVol += orders.asks[i].volume;
-                askDepth.push({ x: orders.asks[i].price, y: cumAskVol });
+                askDepth.push({ x: netRate(orders.asks[i]), y: cumAskVol });
             }
 
             const medBid = medianPrice(orders.bids);
@@ -1197,7 +1201,7 @@
             const allOrders = [
                 ...orders.bids.map(o => ({ ...o, side: 'bid' })),
                 ...orders.asks.map(o => ({ ...o, side: 'ask' })),
-            ].sort((a, b) => b.price - a.price);
+            ].sort((a, b) => netRate(b) - netRate(a));
 
             const html = allOrders.map(order => {
                 const info = badges(order);
@@ -1214,7 +1218,7 @@
                     ? `<div class="cell-vol">${order.volume.toLocaleString()} CC</div>`
                     : `<div class="cell-vol cell-empty">–</div>`;
 
-                const priceCell = `<div class="cell-price">${order.price.toFixed(4)}<span class="price-unit"> sats/CC</span></div>`;
+                const priceCell = `<div class="cell-price">${netRate(order).toFixed(4)}<span class="price-unit"> sats/CC</span></div>`;
 
                 const volRight = order.side === 'ask'
                     ? `<div class="cell-vol">${order.volume.toLocaleString()} CC</div>`
@@ -1278,8 +1282,8 @@
             select.innerHTML = '<option value="">-- Select an order --</option>';
             
             const allOrders = [
-                ...orders.bids.map(o => ({...o, type: 'bid', label: `BID: ${o.contact} @ ${o.price} sats/CC`})),
-                ...orders.asks.map(o => ({...o, type: 'ask', label: `ASK: ${o.contact} @ ${o.price} sats/CC`}))
+                ...orders.bids.map(o => ({...o, type: 'bid', label: `BID: ${o.contact} @ ${netRate(o).toFixed(4)} sats/CC`})),
+                ...orders.asks.map(o => ({...o, type: 'ask', label: `ASK: ${o.contact} @ ${netRate(o).toFixed(4)} sats/CC`}))
             ].sort((a, b) => b.price - a.price);
             
             allOrders.forEach(order => {
