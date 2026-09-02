@@ -209,7 +209,7 @@
         
         .order-row {
             display: grid;
-            grid-template-columns: 1.4fr 0.7fr 1fr 0.7fr 1.4fr;
+            grid-template-columns: 0.55fr 3fr 0.8fr 1.1fr 1.3fr 1.1fr 0.8fr 3fr 0.55fr;
             gap: 10px;
             padding: 12px;
             background: rgba(255, 255, 255, 0.03);
@@ -217,6 +217,18 @@
             margin-bottom: 8px;
             font-size: 0.9em;
             align-items: center;
+        }
+        
+        .cell-del {
+            text-align: right;
+            white-space: nowrap;
+        }
+        
+        .cell-act {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
         }
         
         .order-row.bid {
@@ -489,7 +501,7 @@
             }
             
             .order-row {
-                grid-template-columns: 1.2fr 0.7fr 1fr 0.7fr 1.2fr;
+                grid-template-columns: 0.5fr 2fr 0.8fr 0.9fr 1.1fr 0.9fr 0.8fr 2fr 0.5fr;
                 gap: 4px;
                 font-size: 0.78em;
                 padding: 8px 4px;
@@ -658,11 +670,15 @@
                 <h3 id="asks" class="spine-asks">📕 ASKS (Sell Orders) <a class="anchor" href="#asks" title="Link to this section">#</a></h3>
             </div>
             <div class="order-row order-header">
+                <div id="delHeaderLeft">Delete</div>
                 <div>Contact &amp; Status</div>
                 <div>Max Volume</div>
+                <div>Action (SELL)</div>
                 <div>Price (sats/CC)</div>
+                <div>Action (BUY)</div>
                 <div>Max Volume</div>
                 <div>Contact &amp; Status</div>
+                <div id="delHeaderRight">Delete</div>
             </div>
             <div id="orderList"></div>
 
@@ -834,6 +850,15 @@
                 document.getElementById('githubToken').value = config.token || '';
                 document.getElementById('gistId').value = config.gistId || 'a52699d9f7209a225ae6d10d77d53eca';
             }
+            updateDeleteHeaders();
+        }
+
+        function updateDeleteHeaders() {
+            const label = config.token ? 'Delete' : '';
+            const l = document.getElementById('delHeaderLeft');
+            const r = document.getElementById('delHeaderRight');
+            if (l) l.textContent = label;
+            if (r) r.textContent = label;
         }
 
         function saveConfig() {
@@ -842,6 +867,8 @@
             
             localStorage.setItem('ccOrderBookConfig', JSON.stringify(config));
             showStatus('Configuration saved!', 'success', 'settingsStatus');
+            updateDeleteHeaders();
+            renderOrderBook();
             
             setTimeout(() => closeModal('settingsModal'), 1500);
         }
@@ -1205,37 +1232,36 @@
 
             const html = allOrders.map(order => {
                 const info = badges(order);
-                const removeBtn = `<button class="small-btn" onclick="removeOrder('${order.side}', '${order.id}')">×</button>`;
+                const isBid = order.side === 'bid';
+                const removeBtn = config.token
+                    ? `<button class="small-btn" onclick="removeOrder('${order.side}', '${order.id}')">×</button>`
+                    : '';
                 const offerBtn = order.offerUrl
-                    ? `<a class="offer-btn ${order.side === 'ask' ? 'buy' : 'sell'}" href="${escapeHtml(order.offerUrl)}" target="_blank" rel="noopener">${order.side === 'ask' ? 'BUY' : 'SELL'}</a>`
+                    ? `<a class="offer-btn ${isBid ? 'sell' : 'buy'}" href="${escapeHtml(order.offerUrl)}" target="_blank" rel="noopener">${isBid ? 'SELL' : 'BUY'}</a>`
                     : '';
 
-                const contactCell = order.side === 'bid'
-                    ? `<div class="cell-left">${removeBtn} ${offerBtn} ${info}</div>`
-                    : `<div class="cell-left cell-empty">–</div>`;
+                const delLeft    = isBid ? `<div class="cell-del">${removeBtn}</div>` : `<div class="cell-del cell-empty">–</div>`;
+                const contactL   = isBid ? `<div class="cell-left">${info}</div>`        : `<div class="cell-left cell-empty">–</div>`;
+                const volLeft    = isBid ? `<div class="cell-vol">${order.volume.toLocaleString()} CC</div>` : `<div class="cell-vol cell-empty">–</div>`;
+                const actLeft    = isBid ? `<div class="cell-act">${offerBtn}</div>`     : `<div class="cell-act cell-empty">–</div>`;
+                const priceCell  = `<div class="cell-price">${netRate(order).toFixed(4)}<span class="price-unit"> sats/CC</span></div>`;
+                const actRight   = isBid ? `<div class="cell-act cell-empty">–</div>`    : `<div class="cell-act">${offerBtn}</div>`;
+                const volRight   = isBid ? `<div class="cell-vol cell-empty">–</div>`    : `<div class="cell-vol">${order.volume.toLocaleString()} CC</div>`;
+                const contactR   = isBid ? `<div class="cell-right cell-empty">–</div>`  : `<div class="cell-right">${info}</div>`;
+                const delRight   = isBid ? `<div class="cell-del cell-empty">–</div>`    : `<div class="cell-del">${removeBtn}</div>`;
 
-                const volLeft = order.side === 'bid'
-                    ? `<div class="cell-vol">${order.volume.toLocaleString()} CC</div>`
-                    : `<div class="cell-vol cell-empty">–</div>`;
-
-                const priceCell = `<div class="cell-price">${netRate(order).toFixed(4)}<span class="price-unit"> sats/CC</span></div>`;
-
-                const volRight = order.side === 'ask'
-                    ? `<div class="cell-vol">${order.volume.toLocaleString()} CC</div>`
-                    : `<div class="cell-vol cell-empty">–</div>`;
-
-                const contactRight = order.side === 'ask'
-                    ? `<div class="cell-right">${info} ${offerBtn} ${removeBtn}</div>`
-                    : `<div class="cell-right cell-empty">–</div>`;
-
-                const sideCls = order.side === 'ask' ? 'ask' : 'bid';
+                const sideCls = isBid ? 'bid' : 'ask';
                 return `
                     <div class="order-row ${sideCls}">
-                        ${contactCell}
+                        ${delLeft}
+                        ${contactL}
                         ${volLeft}
+                        ${actLeft}
                         ${priceCell}
+                        ${actRight}
                         ${volRight}
-                        ${contactRight}
+                        ${contactR}
+                        ${delRight}
                     </div>
                 `;
             }).join('');
