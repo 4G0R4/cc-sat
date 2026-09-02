@@ -1275,11 +1275,11 @@
                 const actLeft    = isBid ? `<div class="cell-act">${offerBtn}</div>`     : `<div class="cell-act cell-empty">–</div>`;
                 const gross = order.price;
                     const net = netRate(order);
-                    const priceCell = `<div class="cell-price">${
+                    const priceCell = `<div class="cell-price" style="text-align:center;">${
                         gross === net
-                            ? `<div class="price-line price-net">${net.toFixed(4)}<span class="price-unit">sats/CC</span></div>`
-                            : `<div class="price-line price-gross"><span class="price-tag">gross</span> ${gross.toFixed(4)}<span class="price-unit">sats/CC</span></div>
-                               <div class="price-line price-net"><span class="price-tag">net</span> ${net.toFixed(4)}<span class="price-unit">sats/CC</span></div>`
+                            ? `<div class="price-line price-net">${net.toFixed(4)}</div>`
+                            : `<div class="price-line price-gross"><span class="price-tag">gross</span> ${gross.toFixed(4)}</div>
+                               <div class="price-line price-net"><span class="price-tag">net</span> ${net.toFixed(4)}</div>`
                     }</div>`;
                 const actRight   = isBid ? `<div class="cell-act cell-empty">–</div>`    : `<div class="cell-act">${offerBtn}</div>`;
                 const volRight   = isBid ? `<div class="cell-vol cell-empty">–</div>`    : `<div class="cell-vol">${order.volume.toLocaleString()} CC</div>`;
@@ -1428,7 +1428,7 @@
                 - <a href="https://github.com/4G0R4/cc-sat" target="_blank">Repository</a>
                 - <a href="https://github.com/4G0R4/cc-sat/issues/new" target="_blank">Open a issue</a> 
 				- <a href="https://stacker.news/items/1560507/r/AGORA">Announcement</a>
-                - Place your order <a href="https://stacker.news/items/1560485/r/AGORA" target="_blank">BUY</a> or <a href="https://stacker.news/items/1560467/r/AGORA" target="_blank">SELL</a> on SN< -
+                - Place your order to <a href="https://stacker.news/items/1560485/r/AGORA" target="_blank">BUY</a> or <a href="https://stacker.news/items/1560467/r/AGORA" target="_blank">SELL</a> on SN -
             </small></p>
         </footer>
 
