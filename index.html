@@ -1284,9 +1284,9 @@
                 return `${formatContact(order.contact)} ${feeBadge} ${founderBadge} ${tooltip}`;
             }
 
-            const asksDesc = orders.asks
+            const asksAsc = orders.asks
                 .map(o => ({ ...o, side: 'ask' }))
-                .sort((a, b) => netRate(b) - netRate(a));
+                .sort((a, b) => netRate(a) - netRate(b));
             const bidsDesc = orders.bids
                 .map(o => ({ ...o, side: 'bid' }))
                 .sort((a, b) => netRate(b) - netRate(a));
@@ -1354,7 +1354,7 @@
                 `;
             }
 
-            const html = asksDesc.map(orderRow).join('') + divider + bidsDesc.map(orderRow).join('');
+            const html = bidsDesc.map(orderRow).join('') + divider + asksAsc.map(orderRow).join('');
 
             document.getElementById('orderList').innerHTML = html || '<div style="padding:20px; text-align:center; color:#969696;">No orders</div>';
         }
