@@ -4,7 +4,7 @@ A decentralized peer-to-peer order book for trading Cowboy Credits (CC) and Sato
 
 **Live Order Book:** [https://4g0r4.github.io/cc-sat/](https://4g0r4.github.io/cc-sat/)
 
-**Read the SN announcement** [https://stacker.news/items/1349267](https://stacker.news/items/1349267/r/AGORA)
+**Read the SN announcement** [https://stacker.news/items/1560507](https://stacker.news/items/1560507/r/AGORA)
 
 ## 🌟 Features
 
@@ -207,7 +207,7 @@ Price       Net       Volume    Contact       Status
 
 - **Live Order Book**: [https://4g0r4.github.io/cc-sat/](https://4g0r4.github.io/cc-sat/)
 - **GitHub Repository**: [https://github.com/4G0R4/cc-sat](https://github.com/4G0R4/cc-sat)
-- **Announcement Post**: [Stacker.News](https://stacker.news/items/1349267/r/AGORA)
+- **Announcement Post**: [Stacker.News](https://stacker.news/items/1560507/r/AGORA)
 - **Issue Tracker**: [GitHub Issues](https://github.com/4G0R4/cc-sat/issues)
 - **Order Data (Gist)**: [View Raw Data](https://gist.github.com/4G0R4/a52699d9f7209a225ae6d10d77d53eca)
 

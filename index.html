@@ -262,6 +262,35 @@
             border-left: 1px solid var(--sn-border);
             border-right: 1px solid var(--sn-border);
             white-space: nowrap;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            line-height: 1.2;
+        }
+        
+        .price-line {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+        
+        .price-gross {
+            color: var(--sn-grey);
+            font-weight: 500;
+        }
+        
+        .price-net {
+            color: #FADA5E;
+            font-weight: 700;
+        }
+        
+        .price-tag {
+            font-size: 0.62em;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            font-weight: 600;
+            color: var(--sn-grey);
         }
         
         .cell-vol {
@@ -611,7 +640,7 @@
     <div class="container">
         <header>
             <h1 id="cc-sat"><span class="logo">↯</span> Stacker.News CC/SAT Exchange Order Book <a class="anchor" href="#cc-sat" title="Link to this section">#</a></h1>
-            <div class="subtitle">Order book for Cowboy Credits (CC) ⇄ Satoshis (SAT) trading on Stacker News - Place your order below or comment in the <a href="https://stacker.news/items/1349267/r/AGORA" target="_blank">annoucement post</a>.</div>
+            <div class="subtitle">Order book for Cowboy Credits (CC) ⇄ Satoshis (SAT) trading on Stacker News - Place your order below or comment in the <a href="https://stacker.news/items/1560507/r/AGORA" target="_blank">annoucement post</a>.</div>
         </header>
 
         <div class="warning-banner">
@@ -720,7 +749,7 @@
         <div class="action-buttons">
             <button onclick="window.open('https://stacker.news/items/1560507/r/AGORA', '_blank')" class="btn-secondary">[-] Read SN Announcement</button>
             <button onclick="loadOrders()">[↻] Refresh Orders</button>
-            <button onclick="window.open('https://stacker.news/items/1349267/r/AGORA', '_blank')">[↯] Submit Order via SN</button>
+            <button onclick="window.open('https://stacker.news/items/1560507/r/AGORA', '_blank')">[↯] Submit Order via SN</button>
             <button onclick="openModal('orderModal')">[&#726;] Submit Order via GH</button>
             <button onclick="openModal('settingsModal')" class="btn-secondary">[&#9965;] GH Settings</button>
         </div>
@@ -1244,7 +1273,14 @@
                 const contactL   = isBid ? `<div class="cell-left">${info}</div>`        : `<div class="cell-left cell-empty">–</div>`;
                 const volLeft    = isBid ? `<div class="cell-vol">${order.volume.toLocaleString()} CC</div>` : `<div class="cell-vol cell-empty">–</div>`;
                 const actLeft    = isBid ? `<div class="cell-act">${offerBtn}</div>`     : `<div class="cell-act cell-empty">–</div>`;
-                const priceCell  = `<div class="cell-price">${netRate(order).toFixed(4)}<span class="price-unit"> sats/CC</span></div>`;
+                const gross = order.price;
+                    const net = netRate(order);
+                    const priceCell = `<div class="cell-price">${
+                        gross === net
+                            ? `<div class="price-line price-net">${net.toFixed(4)}<span class="price-unit">sats/CC</span></div>`
+                            : `<div class="price-line price-gross"><span class="price-tag">gross</span> ${gross.toFixed(4)}<span class="price-unit">sats/CC</span></div>
+                               <div class="price-line price-net"><span class="price-tag">net</span> ${net.toFixed(4)}<span class="price-unit">sats/CC</span></div>`
+                    }</div>`;
                 const actRight   = isBid ? `<div class="cell-act cell-empty">–</div>`    : `<div class="cell-act">${offerBtn}</div>`;
                 const volRight   = isBid ? `<div class="cell-vol cell-empty">–</div>`    : `<div class="cell-vol">${order.volume.toLocaleString()} CC</div>`;
                 const contactR   = isBid ? `<div class="cell-right cell-empty">–</div>`  : `<div class="cell-right">${info}</div>`;
