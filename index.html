@@ -309,6 +309,36 @@
             border: none !important;
         }
         
+        .market-divider {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 12px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-top: 1px dashed var(--sn-border);
+            border-bottom: 1px dashed var(--sn-border);
+            font-size: 0.8em;
+            color: var(--sn-grey);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            font-weight: 600;
+        }
+        
+        .mid-market {
+            color: #FADA5E;
+        }
+        
+        .spread-label {
+            color: var(--sn-grey);
+        }
+        
+        .spread-neg {
+            color: var(--sn-ruby);
+        }
+        
         .small-btn {
             padding: 6px 12px;
             font-size: 0.8em;
@@ -1254,12 +1284,14 @@
                 return `${formatContact(order.contact)} ${feeBadge} ${founderBadge} ${tooltip}`;
             }
 
-            const allOrders = [
-                ...orders.bids.map(o => ({ ...o, side: 'bid' })),
-                ...orders.asks.map(o => ({ ...o, side: 'ask' })),
-            ].sort((a, b) => netRate(b) - netRate(a));
+            const asksDesc = orders.asks
+                .map(o => ({ ...o, side: 'ask' }))
+                .sort((a, b) => netRate(b) - netRate(a));
+            const bidsDesc = orders.bids
+                .map(o => ({ ...o, side: 'bid' }))
+                .sort((a, b) => netRate(b) - netRate(a));
 
-            const html = allOrders.map(order => {
+            function orderRow(order) {
                 const info = badges(order);
                 const isBid = order.side === 'bid';
                 const removeBtn = config.token
@@ -1286,9 +1318,8 @@
                 const contactR   = isBid ? `<div class="cell-right cell-empty">–</div>`  : `<div class="cell-right">${info}</div>`;
                 const delRight   = isBid ? `<div class="cell-del cell-empty">–</div>`    : `<div class="cell-del">${removeBtn}</div>`;
 
-                const sideCls = isBid ? 'bid' : 'ask';
                 return `
-                    <div class="order-row ${sideCls}">
+                    <div class="order-row ${isBid ? 'bid' : 'ask'}">
                         ${delLeft}
                         ${contactL}
                         ${volLeft}
@@ -1300,7 +1331,30 @@
                         ${delRight}
                     </div>
                 `;
-            }).join('');
+            }
+
+            const bestAsk = orders.asks.length ? netRate(orders.asks[0]) : null;
+            const bestBid = orders.bids.length ? netRate(orders.bids[0]) : null;
+
+            let divider = '';
+            if (bestBid !== null && bestAsk !== null) {
+                const mid = (bestBid + bestAsk) / 2;
+                const spreadBps = ((bestAsk - bestBid) / bestAsk) * 10000;
+                const spreadTxt = spreadBps >= 0
+                    ? `<span class="spread-label">spread</span> <span>${spreadBps.toFixed(0)} bps</span>`
+                    : `<span class="spread-label">negative spread</span> <span class="spread-neg">${spreadBps.toFixed(0)} bps</span>`;
+                divider = `
+                    <div class="market-divider">
+                        <span>asks</span>
+                        <span>—</span>
+                        <span class="mid-market">mid ${mid.toFixed(4)}</span>
+                        <span>•</span>
+                        ${spreadTxt}
+                    </div>
+                `;
+            }
+
+            const html = asksDesc.map(orderRow).join('') + divider + bidsDesc.map(orderRow).join('');
 
             document.getElementById('orderList').innerHTML = html || '<div style="padding:20px; text-align:center; color:#969696;">No orders</div>';
         }
