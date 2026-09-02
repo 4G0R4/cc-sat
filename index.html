@@ -812,6 +812,16 @@
                 <div class="info-text">Default <strong><code>gist</code></strong> order book is <strong><code>a52699d9f7209a225ae6d10d77d53eca</code></strong>- do not change unless creating private book</div>
             </div>
             <button onclick="saveConfig()">[&#187;] Save Configuration</button>
+            <hr style="border:none; border-top:1px solid rgba(255,255,255,0.15); margin:20px 0;">
+            <div class="form-group">
+                <label>Backup &amp; Recovery</label>
+                <div class="info-text">Last backup: <strong id="lastBackupStamp">none yet</strong></div>
+                <div class="info-text">Automatic snapshots are kept locally (last 5). Use them to recover if the shared book is wiped.</div>
+                <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+                    <button onclick="restoreLastBackup()" class="btn-secondary">[&#8635;] Restore Last Backup</button>
+                    <button onclick="exportOrders()">[&#10515;] Export orders.json</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -881,6 +891,7 @@
     <script>
         let orders = { asks: [], bids: [] };
         let config = { token: '', gistId: 'a52699d9f7209a225ae6d10d77d53eca' };
+        let currentUser = null;
         let depthChart = null;
 
         function netRate(order) {
@@ -909,6 +920,44 @@
             }
         }
 
+        function userOwnsOrder() {
+            if (!currentUser) return false;
+            return orders.asks.some(o => o.owner === currentUser) ||
+                   orders.bids.some(o => o.owner === currentUser);
+        }
+
+        function updateDeleteHeaders() {
+            const label = (config.token && userOwnsOrder()) ? 'Delete' : '';
+            const l = document.getElementById('delHeaderLeft');
+            const r = document.getElementById('delHeaderRight');
+            if (l) l.textContent = label;
+            if (r) r.textContent = label;
+        }
+
+        async function resolveCurrentUser() {
+            if (!config.token) {
+                currentUser = null;
+                updateDeleteHeaders();
+                renderOrderBook();
+                return;
+            }
+            try {
+                const res = await fetch('https://api.github.com/user', {
+                    headers: { 'Authorization': `token ${config.token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    currentUser = data.login || null;
+                } else {
+                    currentUser = null;
+                }
+            } catch (e) {
+                currentUser = null;
+            }
+            updateDeleteHeaders();
+            renderOrderBook();
+        }
+
         function loadConfig() {
             const saved = localStorage.getItem('ccOrderBookConfig');
             if (saved) {
@@ -917,14 +966,8 @@
                 document.getElementById('gistId').value = config.gistId || 'a52699d9f7209a225ae6d10d77d53eca';
             }
             updateDeleteHeaders();
-        }
-
-        function updateDeleteHeaders() {
-            const label = config.token ? 'Delete' : '';
-            const l = document.getElementById('delHeaderLeft');
-            const r = document.getElementById('delHeaderRight');
-            if (l) l.textContent = label;
-            if (r) r.textContent = label;
+            updateBackupUi();
+            resolveCurrentUser();
         }
 
         function saveConfig() {
@@ -935,6 +978,7 @@
             showStatus('Configuration saved!', 'success', 'settingsStatus');
             updateDeleteHeaders();
             renderOrderBook();
+            resolveCurrentUser();
             
             setTimeout(() => closeModal('settingsModal'), 1500);
         }
@@ -967,13 +1011,18 @@
                     if (order.feesIncluded === undefined) order.feesIncluded = true;
                     if (order.territoryFounder === undefined) order.territoryFounder = false;
                     if (order.offerUrl === undefined) order.offerUrl = extractUrl(order.notes);
+                    if (order.owner === undefined) order.owner = null;
                 });
                 orders.asks.forEach(order => {
                     if (order.feesIncluded === undefined) order.feesIncluded = true;
                     if (order.territoryFounder === undefined) order.territoryFounder = false;
                     if (order.offerUrl === undefined) order.offerUrl = extractUrl(order.notes);
+                    if (order.owner === undefined) order.owner = null;
                 });
                 
+                maybePromptRestore(JSON.stringify(orders, null, 2));
+                
+                updateDeleteHeaders();
                 renderOrderBook();
                 updateKPIs();
                 renderDepthChart();
@@ -1025,6 +1074,91 @@
             }
         }
 
+        function getBackupHistory() {
+            try {
+                return JSON.parse(localStorage.getItem('ccOrderBookHistory') || '[]');
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function pushBackup() {
+            try {
+                const history = getBackupHistory();
+                history.push({ time: new Date().toISOString(), content: JSON.stringify(orders, null, 2) });
+                const trimmed = history.slice(-5);
+                localStorage.setItem('ccOrderBookHistory', JSON.stringify(trimmed));
+                localStorage.setItem('ccOrderBookLastBackup', trimmed[trimmed.length - 1].time);
+                updateBackupUi();
+            } catch (e) {
+                console.error('Backup failed:', e);
+            }
+        }
+
+        function lastBackupTime() {
+            return localStorage.getItem('ccOrderBookLastBackup') || '';
+        }
+
+        function updateBackupUi() {
+            const el = document.getElementById('lastBackupStamp');
+            if (el) el.textContent = lastBackupTime() ? new Date(lastBackupTime()).toLocaleString() : 'none yet';
+        }
+
+        async function restoreLastBackup() {
+            const history = getBackupHistory();
+            if (!history.length) {
+                alert('No backup available to restore.');
+                return;
+            }
+            const snap = history[history.length - 1];
+            if (!confirm(`Restore the order book from backup ${new Date(snap.time).toLocaleString()}? This overwrites the current data.`)) return;
+
+            // rewrite the gist with the backup content directly (bypasses the current (possibly wiped) orders ahead of saveOrders)
+            try {
+                if (!config.token) {
+                    alert('Please configure GitHub token first.');
+                    return;
+                }
+                const res = await fetch(`https://api.github.com/gists/${config.gistId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `token ${config.token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ files: { 'orders.json': { content: snap.content } } })
+                });
+                if (!res.ok) throw new Error('Restore failed');
+                orders = JSON.parse(snap.content);
+                loadOrders();
+                showStatus('Order book restored from backup.', 'success', 'settingsStatus');
+            } catch (e) {
+                showStatus(`Restore error: ${e.message}`, 'error', 'settingsStatus');
+            }
+        }
+
+        function exportOrders() {
+            const content = JSON.stringify(orders, null, 2);
+            const blob = new Blob([content], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `cc-order-book-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+        }
+
+        function maybePromptRestore(fetchedContent) {
+            const history = getBackupHistory();
+            if (!history.length) return;
+            const snap = history[history.length - 1];
+            if (snap.content === fetchedContent) return;
+            if (new Date(snap.time) <= new Date()) {
+                // offer restore if local backup exists and differs from the remote book
+                if (confirm(`The order book on the server differs from your last local backup (${new Date(snap.time).toLocaleString()}). Restore the backup? This overwrites the current server data.`)) {
+                    restoreLastBackup();
+                }
+            }
+        }
+
         async function submitOrder() {
             if (!config.token) {
                 showStatus('Please configure GitHub token in Settings first', 'error');
@@ -1063,8 +1197,11 @@
                 contact: contact || 'Anonymous',
                 notes: notes,
                 offerUrl: offerUrl || undefined,
+                owner: currentUser || null,
                 timestamp: new Date().toISOString()
             };
+
+            pushBackup();
 
             if (type === 'ask') {
                 orders.asks.push(order);
@@ -1101,7 +1238,16 @@
                 return;
             }
 
+            const target = (type === 'ask' ? orders.asks : orders.bids).find(o => o.id === orderId);
+            if (!target) return;
+            if (!target.owner || target.owner !== currentUser) {
+                alert('You can only remove orders you created.');
+                return;
+            }
+
             if (!confirm('Mark this order as completed and remove it?')) return;
+
+            pushBackup();
 
             if (type === 'ask') {
                 orders.asks = orders.asks.filter(o => o.id !== orderId);
@@ -1294,14 +1440,14 @@
             const asksAsc = orders.asks
                 .map(o => ({ ...o, side: 'ask' }))
                 .sort((a, b) => netRate(a) - netRate(b));
-            const bidsDesc = orders.bids
+            const bidsAsc = orders.bids
                 .map(o => ({ ...o, side: 'bid' }))
-                .sort((a, b) => netRate(b) - netRate(a));
+                .sort((a, b) => netRate(a) - netRate(b));
 
             function orderRow(order) {
                 const info = badges(order);
                 const isBid = order.side === 'bid';
-                const removeBtn = config.token
+                const removeBtn = order.owner && order.owner === currentUser
                     ? `<button class="small-btn" onclick="removeOrder('${order.side}', '${order.id}')">×</button>`
                     : '';
                 const offerBtn = order.offerUrl
@@ -1361,7 +1507,7 @@
                 `;
             }
 
-            const html = bidsDesc.map(orderRow).join('') + divider + asksAsc.map(orderRow).join('');
+            const html = bidsAsc.map(orderRow).join('') + divider + asksAsc.map(orderRow).join('');
 
             document.getElementById('orderList').innerHTML = html || '<div style="padding:20px; text-align:center; color:#969696;">No orders</div>';
         }
