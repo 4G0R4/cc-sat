@@ -812,14 +812,14 @@
                 <div class="radio-group">
                     <label class="choice">
                         <input type="radio" name="feesIncluded" value="true" checked>
-                        <span>I include fees in my price (net rate = price × 0.7)</span>
+                        <span>I include fees in my price (net rate = listed price)</span>
                     </label>
                     <label class="choice">
                         <input type="radio" name="feesIncluded" value="false">
                         <span>Buyer pays fees on top (+30%)</span>
                     </label>
                 </div>
-                <div class="info-text">If fees are included, the effective rate is 70% of your listed price</div>
+                <div class="info-text">With fees included, the buyer is charged exactly your listed price (net = gross).</div>
             </div>
             <div class="form-group">
                 <label class="choice">
@@ -847,7 +847,8 @@
         let depthChart = null;
 
         function netRate(order) {
-            return order && order.feesIncluded ? order.price / 0.7 : (order ? order.price : null);
+            if (!order) return null;
+            return order.feesIncluded ? order.price : order.price * 1.3;
         }
 
         function medianPrice(list) {
@@ -1426,7 +1427,7 @@
             <p><small>🄯 ↯ Stacker.News CC/SAT Exchange Order Book
                 - <a href="https://github.com/4G0R4/cc-sat" target="_blank">Repository</a>
                 - <a href="https://github.com/4G0R4/cc-sat/issues/new" target="_blank">Open a issue</a> 
-				- <a href="https://stacker.news/items/1560507/r/AGORA">Announcement</a>
+                - <a href="https://stacker.news/items/1560507/r/AGORA">Announcement</a>
                 - Place your order to <a href="https://stacker.news/items/1560485/r/AGORA" target="_blank">BUY</a> or <a href="https://stacker.news/items/1560467/r/AGORA" target="_blank">SELL</a> on SN -
             </small></p>
         </footer>
