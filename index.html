@@ -181,36 +181,35 @@
         }
         
         .order-book {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
             margin-bottom: 35px;
         }
         
-        .book-side {
+        .order-book {
             background: var(--sn-surface);
             border: 1px solid var(--sn-border);
             border-radius: 8px;
             padding: 20px;
         }
         
-        .book-side h3 {
+        .spine-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
+        }
+        
+        .spine-header h3 {
+            margin: 0;
             font-size: 1.1em;
             font-weight: 700;
         }
         
-        .asks h3 {
-            color: #D9847A;
-        }
-        
-        .bids h3 {
-            color: #9DB266;
-        }
+        .spine-header .spine-bids { color: #9DB266; }
+        .spine-header .spine-asks { color: #D9847A; }
         
         .order-row {
             display: grid;
-            grid-template-columns: 1.2fr 0.9fr 1.6fr auto;
+            grid-template-columns: 1.4fr 0.7fr 1fr 0.7fr 1.4fr;
             gap: 10px;
             padding: 12px;
             background: rgba(255, 255, 255, 0.03);
@@ -220,12 +219,47 @@
             align-items: center;
         }
         
-        .asks .order-row {
-            border-left: 3px solid var(--sn-ruby);
+        .order-row.bid {
+            border-left: 3px solid var(--sn-olive);
         }
         
-        .bids .order-row {
-            border-left: 3px solid var(--sn-olive);
+        .order-row.ask {
+            border-right: 3px solid var(--sn-ruby);
+        }
+        
+        .cell-left,
+        .cell-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        
+        .order-row.bid .cell-left {
+            justify-content: flex-start;
+        }
+        
+        .order-row.ask .cell-right {
+            justify-content: flex-end;
+            text-align: right;
+        }
+        
+        .cell-price {
+            text-align: center;
+            font-weight: 600;
+            border-left: 1px solid var(--sn-border);
+            border-right: 1px solid var(--sn-border);
+            white-space: nowrap;
+        }
+        
+        .cell-vol {
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        .cell-empty {
+            color: transparent;
+            user-select: none;
         }
         
         .order-header {
@@ -238,14 +272,6 @@
         .small-btn {
             padding: 6px 12px;
             font-size: 0.8em;
-        }
-        
-        .row-actions {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            justify-content: flex-end;
-            white-space: nowrap;
         }
         
         .offer-btn {
@@ -455,7 +481,7 @@
         
         @media (max-width: 768px) {
             .order-book {
-                grid-template-columns: 1fr;
+                margin-bottom: 30px;
             }
             
             .kpi-section {
@@ -463,12 +489,21 @@
             }
             
             .order-row {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1.2fr 0.7fr 1fr 0.7fr 1.2fr;
+                gap: 4px;
+                font-size: 0.78em;
+                padding: 8px 4px;
+            }
+            
+            .spine-header {
+                flex-direction: column;
+                align-items: flex-start;
                 gap: 6px;
             }
             
-            .row-actions {
-                justify-content: flex-start;
+            .cell-left,
+            .cell-right {
+                gap: 4px;
             }
 
             h1 {
@@ -618,28 +653,19 @@
 
         <div class="order-book">
 
-            <div class="book-side bids">
-                <h3 id="bids">📗 BIDS (Buy Orders) <a class="anchor" href="#bids" title="Link to this section">#</a></h3>
-                <div class="order-row order-header">
-                    <div>Price (sats/CC)</div>
-                    <div>Max Volume</div>
-                    <div>Contact & Status</div>
-                    <div></div>
-                </div>
-                <div id="bidsList"></div>
+            <div class="spine-header">
+                <h3 id="bids" class="spine-bids">📗 BIDS (Buy Orders) <a class="anchor" href="#bids" title="Link to this section">#</a></h3>
+                <h3 id="asks" class="spine-asks">📕 ASKS (Sell Orders) <a class="anchor" href="#asks" title="Link to this section">#</a></h3>
             </div>
+            <div class="order-row order-header">
+                <div>Contact &amp; Status</div>
+                <div>Max Volume</div>
+                <div>Price (sats/CC)</div>
+                <div>Max Volume</div>
+                <div>Contact &amp; Status</div>
+            </div>
+            <div id="orderList"></div>
 
-            <div class="book-side asks">
-                <h3 id="asks">📕 ASKS (Sell Orders) <a class="anchor" href="#asks" title="Link to this section">#</a></h3>
-                <div class="order-row order-header">
-                    <div>Price (sats/CC)</div>
-                    <div>Max Volume</div>
-                    <div>Contact & Status</div>
-                    <div></div>
-                </div>
-                <div id="asksList"></div>
-            </div>
-            
         </div>
 
         <div class="trade-simulator" style="background: var(--sn-surface, #18181a); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 20px; margin-bottom: 25px;">
@@ -1155,72 +1181,62 @@
         }
 
         function renderOrderBook() {
-            const asksHtml = orders.asks.map(order => {
+            function badges(order) {
                 const feeBadge = order.feesIncluded 
                     ? '<span class="badge badge-fees-included">Fees Included</span>'
                     : '<span class="badge badge-buyer-pays">Buyer +30%</span>';
                 const founderBadge = order.territoryFounder 
                     ? '<span class="badge badge-founder">Founder -21%</span>'
                     : '';
-                const offerBtn = order.offerUrl 
-                    ? `<a class="offer-btn buy" href="${escapeHtml(order.offerUrl)}" target="_blank" rel="noopener">BUY</a>`
+                const tooltip = order.notes && stripUrl(order.notes)
+                    ? `<span class="info-icon" title="${escapeHtml(stripUrl(order.notes))}">&#9432</span>`
                     : '';
-                const tooltipNotes = stripUrl(order.notes);
-                
+                return `${formatContact(order.contact)} ${feeBadge} ${founderBadge} ${tooltip}`;
+            }
+
+            const allOrders = [
+                ...orders.bids.map(o => ({ ...o, side: 'bid' })),
+                ...orders.asks.map(o => ({ ...o, side: 'ask' })),
+            ].sort((a, b) => b.price - a.price);
+
+            const html = allOrders.map(order => {
+                const info = badges(order);
+                const removeBtn = `<button class="small-btn" onclick="removeOrder('${order.side}', '${order.id}')">×</button>`;
+                const offerBtn = order.offerUrl
+                    ? `<a class="offer-btn ${order.side === 'ask' ? 'buy' : 'sell'}" href="${escapeHtml(order.offerUrl)}" target="_blank" rel="noopener">${order.side === 'ask' ? 'BUY' : 'SELL'}</a>`
+                    : '';
+
+                const contactCell = order.side === 'bid'
+                    ? `<div class="cell-left">${removeBtn} ${offerBtn} ${info}</div>`
+                    : `<div class="cell-left cell-empty">–</div>`;
+
+                const volLeft = order.side === 'bid'
+                    ? `<div class="cell-vol">${order.volume.toLocaleString()} CC</div>`
+                    : `<div class="cell-vol cell-empty">–</div>`;
+
+                const priceCell = `<div class="cell-price">${order.price.toFixed(4)}<span class="price-unit"> sats/CC</span></div>`;
+
+                const volRight = order.side === 'ask'
+                    ? `<div class="cell-vol">${order.volume.toLocaleString()} CC</div>`
+                    : `<div class="cell-vol cell-empty">–</div>`;
+
+                const contactRight = order.side === 'ask'
+                    ? `<div class="cell-right">${info} ${offerBtn} ${removeBtn}</div>`
+                    : `<div class="cell-right cell-empty">–</div>`;
+
+                const sideCls = order.side === 'ask' ? 'ask' : 'bid';
                 return `
-                    <div class="order-row">
-                        <div>
-                            ${order.price.toFixed(4)} sats/CC
-                        </div>
-                        <div>${order.volume.toLocaleString()} CC</div>
-                        <div>
-                            ${formatContact(order.contact)}
-                            ${feeBadge}
-                            ${founderBadge}
-                            ${tooltipNotes ? `<span class="info-icon" title="${escapeHtml(tooltipNotes)}">&#9432</span>` : ''}
-                        </div>
-                        <div class="row-actions">
-                            ${offerBtn}
-                            <button class="small-btn" onclick="removeOrder('ask', '${order.id}')">×</button>
-                        </div>
+                    <div class="order-row ${sideCls}">
+                        ${contactCell}
+                        ${volLeft}
+                        ${priceCell}
+                        ${volRight}
+                        ${contactRight}
                     </div>
                 `;
             }).join('');
 
-            const bidsHtml = orders.bids.map(order => {
-                const feeBadge = order.feesIncluded 
-                    ? '<span class="badge badge-fees-included">Fees Included</span>'
-                    : '<span class="badge badge-buyer-pays">Buyer +30%</span>';
-                const founderBadge = order.territoryFounder 
-                    ? '<span class="badge badge-founder">Founder -21%</span>'
-                    : '';
-                const offerBtn = order.offerUrl 
-                    ? `<a class="offer-btn sell" href="${escapeHtml(order.offerUrl)}" target="_blank" rel="noopener">SELL</a>`
-                    : '';
-                const tooltipNotes = stripUrl(order.notes);
-                
-                return `
-                    <div class="order-row">
-                        <div>
-                            ${order.price.toFixed(4)} sats/CC
-                        </div>
-                        <div>${order.volume.toLocaleString()} CC</div>
-                        <div>
-                            ${formatContact(order.contact)}
-                            ${feeBadge}
-                            ${founderBadge}
-                            ${tooltipNotes ? `<span class="info-icon" title="${escapeHtml(tooltipNotes)}">&#9432</span>` : ''}
-                        </div>
-                        <div class="row-actions">
-                            ${offerBtn}
-                            <button class="small-btn" onclick="removeOrder('bid', '${order.id}')">×</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            document.getElementById('asksList').innerHTML = asksHtml || '<div style="padding:20px; text-align:center; color:#969696;">No sell orders</div>';
-            document.getElementById('bidsList').innerHTML = bidsHtml || '<div style="padding:20px; text-align:center; color:#969696;">No buy orders</div>';
+            document.getElementById('orderList').innerHTML = html || '<div style="padding:20px; text-align:center; color:#969696;">No orders</div>';
         }
 
         function formatContact(contact) {
