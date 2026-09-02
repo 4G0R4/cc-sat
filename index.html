@@ -744,7 +744,14 @@
 
         <div class="trade-simulator" style="background: var(--sn-surface, #18181a); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 20px; margin-bottom: 25px;">
             <h3 id="simulator" style="color: #FADA5E; margin-bottom: 15px; font-size: 1.1em;">📊 Trade Simulator <a class="anchor" href="#simulator" title="Link to this section">#</a></h3>
-            <div class="sim-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="sim-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                <div class="form-group">
+                    <label>Order Type:</label>
+                    <select id="simulatorType" onchange="onSimTypeChange()" style="width: 100%; padding: 12px; background: #121211; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; color: #f0f0f0; font-family: inherit;">
+                        <option value="ask">Asks</option>
+                        <option value="bid">Bids</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label>Select Order:</label>
                     <select id="simulatorOrder" onchange="updateSimulator()" style="width: 100%; padding: 12px; background: #121211; border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; color: #f0f0f0; font-family: inherit;">
@@ -1393,14 +1400,22 @@
             return div.innerHTML;
         }
 
+        function onSimTypeChange() {
+            document.getElementById('simulatorAmount').value = '';
+            document.getElementById('simulatorResult').style.display = 'none';
+            populateSimulatorOrders();
+        }
+
         function populateSimulatorOrders() {
             const select = document.getElementById('simulatorOrder');
+            const type = document.getElementById('simulatorType').value;
+            
             select.innerHTML = '<option value="">-- Select an order --</option>';
             
-            const allOrders = [
-                ...orders.bids.map(o => ({...o, type: 'bid', label: `BID: ${o.contact} @ ${netRate(o).toFixed(4)} sats/CC`})),
-                ...orders.asks.map(o => ({...o, type: 'ask', label: `ASK: ${o.contact} @ ${netRate(o).toFixed(4)} sats/CC`}))
-            ].sort((a, b) => b.price - a.price);
+            const source = type === 'bid' ? orders.bids : orders.asks;
+            const allOrders = source
+                .map(o => ({...o, type, label: `${type === 'bid' ? 'BID' : 'ASK'}: ${o.contact} @ ${netRate(o).toFixed(4)} sats/CC`}))
+                .sort((a, b) => b.price - a.price);
             
             allOrders.forEach(order => {
                 const option = document.createElement('option');
